@@ -6,10 +6,9 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 
 class InputFieldListener : TextView.OnEditorActionListener{
-    private val postHandler = PostHandler()
 
     constructor(){
-        postHandler.init()
+
     }
 
     override fun onEditorAction(p0: TextView?, actionId: Int, p2: KeyEvent?): Boolean {

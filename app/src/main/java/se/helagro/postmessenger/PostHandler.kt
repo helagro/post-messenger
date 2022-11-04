@@ -1,13 +1,21 @@
 package se.helagro.postmessenger
 
 class PostHandler {
-    private var isInit = false
+    companion object{
+        private const val ENDPOINT_PREFERENCE_ID = "endpoint_preference"
 
-    fun init(){
-        isInit = true
+        fun getEndpoint(): String?{
+            val storageHandler = StorageHandler.getInstance()
+            return storageHandler.getString(ENDPOINT_PREFERENCE_ID)
+        }
+    }
+
+    private val endpoint: String
+
+    constructor(endpoint: String){
+        this.endpoint = endpoint
     }
 
     fun sendMessage(content: String){
-        if(!isInit) throw Exception("PostHandler was not initialized")
     }
 }
