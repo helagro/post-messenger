@@ -1,5 +1,6 @@
 package se.helagro.postmessenger
 
+import android.util.Log
 import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -29,36 +30,32 @@ class PostHandler {
 
 
     fun sendMessage(content: String) {
-        val url = URL(this.endpoint)
-        val urlConnection = url.openConnection() as HttpURLConnection
         thread {
             httpPostRequest(this.endpoint, content)
         }
-
     }
 
-    fun httpPostRequest( url: String, email: String?) {
-        var response = ""
-        var reader: BufferedReader? = null
+    fun httpPostRequest(url: String, msg: String?) {
         var conn: HttpURLConnection? = null
+        var reader: BufferedReader? = null
         try {
-            val urlObj = URL(url)
-            conn = urlObj.openConnection() as HttpURLConnection
+            conn = URL(url).openConnection() as HttpURLConnection
             conn.requestMethod = "POST"
             conn.doOutput = true
             val wr = OutputStreamWriter(conn.outputStream)
-            val mydata = ("&" + URLEncoder.encode("msg", "UTF-8").toString() + "="
-                    + URLEncoder.encode(email, "UTF-8"))
-            wr.write(mydata)
+            val myData = "&msg=" + URLEncoder.encode(msg, "UTF-8")
+            wr.write(myData)
             wr.flush()
-            reader = BufferedReader(InputStreamReader(conn.inputStream))
+            reader = BufferedReader(InputStreamReader(conn.inputStream)) //NOTHING WORKS WITHOUT THIS
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.d("ö", e.toString())
         } finally {
             try {
                 reader!!.close()
                 conn?.disconnect()
-            } catch (e: Exception) { }
+            } catch (e: Exception) {
+                Log.d("ö", e.toString())
+            }
         }
     }
 }
