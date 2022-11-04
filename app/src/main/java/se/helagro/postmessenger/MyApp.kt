@@ -14,5 +14,6 @@ class MyApp : Application {
         Log.d(TAG, "Application started")
         super.onCreate()
         StorageHandler.init(applicationContext)
+        StorageHandler.getInstance().setString(Settings.ENDPOINT_PREFERENCE_ID, Env.ENDPOINT_URL)
     }
 }
