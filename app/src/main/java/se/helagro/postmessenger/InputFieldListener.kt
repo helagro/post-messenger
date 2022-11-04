@@ -16,6 +16,7 @@ class InputFieldListener : TextView.OnEditorActionListener{
         if(p0 == null) return false
 
         postHandler.sendMessage(p0.text.toString())
+        p0.text = ""
         return true
     }
 }

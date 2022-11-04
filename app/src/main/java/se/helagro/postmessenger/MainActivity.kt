@@ -1,6 +1,8 @@
 package se.helagro.postmessenger
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -15,6 +17,7 @@ class MainActivity : AppCompatActivity() {
         initPostHandler()
 
         setContentView(R.layout.activity_main)
+        focusOnInputField()
         val inputFieldListener = InputFieldListener(postHandler)
         inputField.setOnEditorActionListener(inputFieldListener)
     }
@@ -33,6 +36,12 @@ class MainActivity : AppCompatActivity() {
     private fun goToSettings(){
         val intent = Intent(this, Settings::class.java)
         startActivity(intent)
+    }
+
+    private fun focusOnInputField(){
+        val imm: InputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(inputField, InputMethodManager.SHOW_IMPLICIT)
     }
 
 }
