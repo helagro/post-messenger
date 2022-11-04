@@ -1,6 +1,5 @@
 package se.helagro.postmessenger
 
-import android.util.Log
 import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -33,51 +32,33 @@ class PostHandler {
         val url = URL(this.endpoint)
         val urlConnection = url.openConnection() as HttpURLConnection
         thread {
-            httpPostRequest(this.endpoint, "please")
+            httpPostRequest(this.endpoint, content)
         }
 
     }
 
-    fun httpPostRequest( url: String, email: String?): String? {
+    fun httpPostRequest( url: String, email: String?) {
         var response = ""
         var reader: BufferedReader? = null
         var conn: HttpURLConnection? = null
         try {
-            Log.d("RequestManager", "$url ")
             val urlObj = URL(url)
             conn = urlObj.openConnection() as HttpURLConnection
             conn.requestMethod = "POST"
-            conn!!.doOutput = true
+            conn.doOutput = true
             val wr = OutputStreamWriter(conn.outputStream)
-            val mydata = ("&" + URLEncoder.encode("Email", "UTF-8").toString() + "="
+            val mydata = ("&" + URLEncoder.encode("msg", "UTF-8").toString() + "="
                     + URLEncoder.encode(email, "UTF-8"))
             wr.write(mydata)
             wr.flush()
-            Log.d("post response code", conn.responseCode.toString() + " ")
-            val responseCode = conn.responseCode
             reader = BufferedReader(InputStreamReader(conn.inputStream))
-            val sb = StringBuilder()
-            var line: String? = null
-            while (reader.readLine().also { line = it } != null) {
-                sb.append(
-                    """
-                    $line
-                    
-                    """.trimIndent()
-                )
-            }
-            response = sb.toString()
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("Error", "error")
         } finally {
             try {
                 reader!!.close()
                 conn?.disconnect()
-            } catch (ex: Exception) {
-            }
+            } catch (e: Exception) { }
         }
-        Log.d("RESPONSE POST", response)
-        return response
     }
 }
