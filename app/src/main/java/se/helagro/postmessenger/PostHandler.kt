@@ -1,12 +1,13 @@
 package se.helagro.postmessenger
 
-import android.R.attr.data
 import android.util.Log
 import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
-import java.io.BufferedOutputStream
-import java.io.OutputStream
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 
@@ -32,40 +33,25 @@ class PostHandler {
         val url = URL(this.endpoint)
         val urlConnection = url.openConnection() as HttpURLConnection
         thread {
-            try {
-                urlConnection.setRequestMethod("GET")
-                urlConnection.setDoInput(true);
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestProperty("Content-Type", "text/plain");
-                urlConnection.setChunkedStreamingMode(0)
-                val out: OutputStream = BufferedOutputStream(urlConnection.outputStream)
-
-                out.write(content.toByteArray());
-                out.flush();
-                urlConnection.connect()
-            } finally {
-                urlConnection.disconnect()
-            }
-            Log.d("ö", "wafea" + content.toByteArray().toString())
+            httpPostRequest(this.endpoint, "please")
         }
 
     }
 
-    fun httpPostRequest(context: Context?, url: String, email: String?): String? {
+    fun httpPostRequest( url: String, email: String?): String? {
         var response = ""
         var reader: BufferedReader? = null
         var conn: HttpURLConnection? = null
         try {
             Log.d("RequestManager", "$url ")
-            Log.e("data::", " " + data)
             val urlObj = URL(url)
             conn = urlObj.openConnection() as HttpURLConnection
             conn.requestMethod = "POST"
             conn!!.doOutput = true
             val wr = OutputStreamWriter(conn.outputStream)
-            data += ("&" + URLEncoder.encode("Email", "UTF-8").toString() + "="
+            val mydata = ("&" + URLEncoder.encode("Email", "UTF-8").toString() + "="
                     + URLEncoder.encode(email, "UTF-8"))
-            wr.write(data)
+            wr.write(mydata)
             wr.flush()
             Log.d("post response code", conn.responseCode.toString() + " ")
             val responseCode = conn.responseCode
@@ -86,7 +72,7 @@ class PostHandler {
             Log.d("Error", "error")
         } finally {
             try {
-                reader.close()
+                reader!!.close()
                 conn?.disconnect()
             } catch (ex: Exception) {
             }
