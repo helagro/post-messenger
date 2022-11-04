@@ -1,8 +1,10 @@
 package se.helagro.postmessenger
 
+import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
+
 class PostHandler {
     companion object{
-        private const val ENDPOINT_PREFERENCE_ID = "endpoint_preference"
+
 
         fun getEndpoint(): String?{
             val storageHandler = StorageHandler.getInstance()

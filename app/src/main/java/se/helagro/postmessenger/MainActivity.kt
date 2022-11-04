@@ -1,7 +1,9 @@
 package se.helagro.postmessenger
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -13,12 +15,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val succeded = initPostHandler()
-        Log.d(TAG, "dwafae" + succeded)
-        if(!succeded) return
+        initPostHandler()
 
         setContentView(R.layout.activity_main)
-        inputField.setOnEditorActionListener(InputFieldListener())
+        val inputFieldListener = InputFieldListener(postHandler)
+        inputField.setOnEditorActionListener(inputFieldListener)
     }
 
     private fun initPostHandler(): Boolean{
@@ -26,15 +27,24 @@ class MainActivity : AppCompatActivity() {
         if(postHandlerEndpoint == null){
             goToSettings()
             return false
-        } else {
-            postHandler = PostHandler(postHandlerEndpoint)
-            return true
         }
+
+        postHandler = PostHandler(postHandlerEndpoint)
+        return true
     }
 
     private fun goToSettings(){
         val intent = Intent(this, Settings::class.java)
         startActivity(intent)
     }
+
+
+    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
+            // Handle the Intent
+        }
+    }
+
 
 }

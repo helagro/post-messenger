@@ -31,5 +31,11 @@ class StorageHandler {
         return sharedPreferences.getString(id, null)
     }
 
+    fun setString(id: String, value: String){
+        val editor = sharedPreferences.edit()
+        editor.putString(id, value)
+        editor.commit()
+    }
+
 
 }
