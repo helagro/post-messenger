@@ -11,8 +11,8 @@ class MyApp : Application {
     }
 
     override fun onCreate() {
-        super.onCreate()
         Log.d(TAG, "Application started")
+        super.onCreate()
         StorageHandler.init(applicationContext)
     }
 }
