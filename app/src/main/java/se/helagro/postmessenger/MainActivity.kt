@@ -1,9 +1,6 @@
 package se.helagro.postmessenger
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -37,14 +34,5 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, Settings::class.java)
         startActivity(intent)
     }
-
-
-    val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val intent = result.data
-            // Handle the Intent
-        }
-    }
-
 
 }
