@@ -11,6 +11,6 @@ class MyApp : Application() {
 
         super.onCreate()
         StorageHandler.init(applicationContext)
-        StorageHandler.getInstance().setString(Settings.ENDPOINT_PREFERENCE_ID, Env.ENDPOINT_URL)
+        //StorageHandler.getInstance().setString(Settings.ENDPOINT_PREFERENCE_ID, Env.ENDPOINT_URL)
     }
 }

@@ -3,32 +3,41 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
+import android.webkit.URLUtil
+import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-private const val TAG = "MainActivity"
-
 class MainActivity : AppCompatActivity() {
+    val settingsLauncher = registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
+        val didSucceed = initPostHandler()
+        if(didSucceed){
+            setupViews()
+        }
+    }
     val postItems = PostItems()
-    private lateinit var postHandler: PostHandler
+    private var postHandler: PostHandler? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initPostHandler()
-
         setContentView(R.layout.activity_main)
-        focusOnInputField()
-        val inputFieldListener = InputFieldListener(postHandler, postItems)
-        inputField.setOnEditorActionListener(inputFieldListener)
 
-        val postListAdapter = PostListAdapter(this, postItems)
-        postLogList.adapter = postListAdapter
-        postItems.addListener(postListAdapter)
+        val didSucceed = initPostHandler()
+        if(!didSucceed) return
+
+        setupViews()
     }
 
     private fun initPostHandler(): Boolean{
         val postHandlerEndpoint = PostHandler.getEndpoint()
-        if(postHandlerEndpoint == null){
+        if(postHandlerEndpoint == null) {
+            goToSettings()
+            return false
+        } else if(!URLUtil.isValidUrl(postHandlerEndpoint)){
+            Toast.makeText(this, "Invalid endpoint URL", Toast.LENGTH_LONG).show()
             goToSettings()
             return false
         }
@@ -38,8 +47,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goToSettings(){
-        val intent = Intent(this, Settings::class.java)
-        startActivity(intent)
+        settingsLauncher.launch(Intent(this, Settings::class.java))
+    }
+
+    private fun setupViews(){
+        //INPUT_FIELD
+        focusOnInputField()
+        val inputFieldListener = InputFieldListener(postHandler!!, postItems)
+        inputField.setOnEditorActionListener(inputFieldListener)
+
+        //POST_LIST
+        val postListAdapter = PostListAdapter(this, postItems)
+        postLogList.adapter = postListAdapter
+        postItems.addListener(postListAdapter)
     }
 
     private fun focusOnInputField(){
@@ -48,8 +68,13 @@ class MainActivity : AppCompatActivity() {
         imm.showSoftInput(inputField, InputMethodManager.SHOW_IMPLICIT)
     }
 
+
+    /**
+     * ENDING LIFECYCLE
+     */
+
     override fun onStop() {
         super.onStop()
-        postItems.removeListener(postLogList.adapter as PostListAdapter)
+        (postLogList.adapter as PostListAdapter?)?.let { postItems.removeListener(it) }
     }
 }
