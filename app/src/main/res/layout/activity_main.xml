@@ -8,10 +8,13 @@
     android:orientation="vertical"
     >
 
-    <View
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/postLogList"
+        android:transcriptMode="normal"
+        android:stackFromBottom="true"/>
 
     <EditText
         android:layout_width="match_parent"

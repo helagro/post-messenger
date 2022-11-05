@@ -9,8 +9,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
+    val postLogItems = ArrayList<PostLogItem>()
     private lateinit var postHandler: PostHandler
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,8 +18,13 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
         focusOnInputField()
-        val inputFieldListener = InputFieldListener(postHandler)
+        val inputFieldListener = InputFieldListener(postHandler, postLogItems)
         inputField.setOnEditorActionListener(inputFieldListener)
+
+        postLogItems.add(PostLogItem("1"))
+        postLogItems.add(PostLogItem("2"))
+
+        postLogList.adapter = PostLogListAdapter(this, postLogItems)
     }
 
     private fun initPostHandler(): Boolean{

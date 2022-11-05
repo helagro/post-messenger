@@ -29,9 +29,9 @@ class PostHandler {
     }
 
 
-    fun sendMessage(content: String) {
+    fun sendMessage(content: PostLogItem) {
         thread {
-            httpPostRequest(this.endpoint, content)
+            httpPostRequest(this.endpoint, content.msg)
         }
     }
 
