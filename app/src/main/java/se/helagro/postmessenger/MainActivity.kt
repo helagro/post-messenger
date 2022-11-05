@@ -2,6 +2,8 @@ package se.helagro.postmessenger
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.webkit.URLUtil
 import android.widget.Toast
@@ -26,9 +28,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val didSucceed = initPostHandler()
-        if(!didSucceed) return
+        if(didSucceed){
+            setupViews()
+        }
 
-        setupViews()
     }
 
     private fun initPostHandler(): Boolean{
@@ -68,6 +71,15 @@ class MainActivity : AppCompatActivity() {
         imm.showSoftInput(inputField, InputMethodManager.SHOW_IMPLICIT)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.activity_main_app_bar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        goToSettings()
+        return true
+    }
 
     /**
      * ENDING LIFECYCLE

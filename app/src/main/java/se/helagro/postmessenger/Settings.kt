@@ -7,8 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.settings.*
 
 
-private const val TAG = "Settings"
-
 class Settings: AppCompatActivity() {
     companion object{
         const val ENDPOINT_PREFERENCE_ID = "endpoint_preference"
@@ -22,6 +20,8 @@ class Settings: AppCompatActivity() {
 
         val actionBar: ActionBar = supportActionBar!!
         actionBar.setDisplayHomeAsUpEnabled(true)
+
+        endpointInput.setText(storageHandler.getString(ENDPOINT_PREFERENCE_ID)?: "")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -33,7 +33,6 @@ class Settings: AppCompatActivity() {
         saveSettings()
         super.onPause()
     }
-
 
     private fun saveSettings(){
         storageHandler.setString(ENDPOINT_PREFERENCE_ID, endpointInput.text.toString())
