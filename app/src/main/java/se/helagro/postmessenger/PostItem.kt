@@ -1,6 +1,6 @@
 package se.helagro.postmessenger
 
-class PostLogItem {
+class PostItem {
     val msg: String
 
     constructor(msg: String){

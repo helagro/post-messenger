@@ -6,11 +6,11 @@ import android.widget.TextView
 
 class InputFieldListener : TextView.OnEditorActionListener{
     val postHandler: PostHandler
-    val postLogItems: ArrayList<PostLogItem>
+    val postItems: PostItems
 
-    constructor(postHandler: PostHandler, postLogItems: ArrayList<PostLogItem>){
+    constructor(postHandler: PostHandler, postItems: PostItems){
         this.postHandler = postHandler
-        this.postLogItems = postLogItems
+        this.postItems = postItems
     }
 
     override fun onEditorAction(p0: TextView?, actionId: Int, p2: KeyEvent?): Boolean {
@@ -18,10 +18,10 @@ class InputFieldListener : TextView.OnEditorActionListener{
         if(p0 == null) return false
 
         val textInput = p0.text.toString()
-        val postLogItem = PostLogItem(textInput)
-        postLogItems.add(postLogItem)
+        val postItem = PostItem(textInput)
+        postItems.add(postItem)
 
-        postHandler.sendMessage(postLogItem)
+        postHandler.sendMessage(postItem)
         p0.text = ""
         return true
     }

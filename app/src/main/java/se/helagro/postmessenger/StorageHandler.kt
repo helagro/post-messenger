@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 
 
-//NOT THREADING SAFE!!
+//NOT THREADING SAFE
 class StorageHandler {
     companion object{
         private const val PREFERENCES_NAME = "main_preferences"
