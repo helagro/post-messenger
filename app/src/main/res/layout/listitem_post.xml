@@ -18,9 +18,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/postLogListImgBtn"
-        android:src="@android:drawable/stat_notify_sync"
         android:clickable="false"
         android:tooltipText="Status"
+        android:background="@null"
         />
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package se.helagro.postmessenger
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -36,17 +37,19 @@ class PostHandler {
             val code = makeResquest(postItem.msg)
 
             if(code == 200) postItem.status = PostItemStatus.SUCCESS
+            else postItem.status = PostItemStatus.FAILURE
             mainHandler.post(thread {
                 listener.onUpdate(code)
             })
         }
     }
 
-    fun makeResquest(msg: String): Int {
+    private fun makeResquest(msg: String): Int {
         var conn: HttpURLConnection? = null
         var reader: BufferedReader? = null
         try {
             conn = URL(this.endpoint).openConnection() as HttpURLConnection
+            conn.connectTimeout = 5000
             conn.requestMethod = "POST"
             conn.doOutput = true
             val wr = OutputStreamWriter(conn.outputStream)
