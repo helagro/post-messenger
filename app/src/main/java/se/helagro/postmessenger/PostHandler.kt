@@ -1,6 +1,7 @@
 package se.helagro.postmessenger
 
-import android.util.Log
+import android.os.Handler
+import android.os.Looper
 import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -29,17 +30,23 @@ class PostHandler {
     }
 
 
-    fun sendMessage(content: PostItem) {
-        thread {
-            httpPostRequest(this.endpoint, content.msg)
+    fun sendMessage(postItem: PostItem, listener: PostHandlerListener) {
+        val mainHandler = Handler(Looper.getMainLooper())
+        thread{
+            val code = makeResquest(postItem.msg)
+
+            if(code == 200) postItem.status = PostItemStatus.SUCCESS
+            mainHandler.post(thread {
+                listener.onUpdate(code)
+            })
         }
     }
 
-    fun httpPostRequest(url: String, msg: String?) {
+    fun makeResquest(msg: String): Int {
         var conn: HttpURLConnection? = null
         var reader: BufferedReader? = null
         try {
-            conn = URL(url).openConnection() as HttpURLConnection
+            conn = URL(this.endpoint).openConnection() as HttpURLConnection
             conn.requestMethod = "POST"
             conn.doOutput = true
             val wr = OutputStreamWriter(conn.outputStream)
@@ -47,15 +54,17 @@ class PostHandler {
             wr.write(myData)
             wr.flush()
             reader = BufferedReader(InputStreamReader(conn.inputStream)) //NOTHING WORKS WITHOUT THIS
+            return conn.responseCode
         } catch (e: Exception) {
-            Log.d("ö", e.toString())
+            return -1
         } finally {
             try {
                 reader!!.close()
                 conn?.disconnect()
             } catch (e: Exception) {
-                Log.d("ö", e.toString())
+                return -1
             }
         }
     }
+
 }
