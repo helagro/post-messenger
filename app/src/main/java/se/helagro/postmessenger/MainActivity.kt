@@ -85,8 +85,8 @@ class MainActivity : AppCompatActivity() {
      * ENDING LIFECYCLE
      */
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         (postLogList.adapter as PostListAdapter?)?.let { postItems.removeListener(it) }
     }
 }
