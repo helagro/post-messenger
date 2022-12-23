@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import se.helagro.postmessenger.network.NetworkHandler
 
 class MainActivity : AppCompatActivity() {
     val settingsLauncher = registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->

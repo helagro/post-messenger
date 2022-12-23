@@ -3,8 +3,10 @@ package se.helagro.postmessenger
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
+import se.helagro.postmessenger.network.NetworkHandler
+import se.helagro.postmessenger.network.NetworkHandlerListener
 
-class InputFieldListener : TextView.OnEditorActionListener, NetworkHandlerListener{
+class InputFieldListener : TextView.OnEditorActionListener, NetworkHandlerListener {
     val networkHandler : NetworkHandler
     val postHistory: PostHistory
 

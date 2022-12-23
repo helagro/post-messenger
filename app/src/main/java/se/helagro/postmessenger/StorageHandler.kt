@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 
 
 //NOT THREADING SAFE
-class StorageHandler {
+class StorageHandler private constructor(context: Context) {
     companion object{
         private const val PREFERENCES_NAME = "main_preferences"
         private var instance: StorageHandler? = null
@@ -23,7 +23,7 @@ class StorageHandler {
 
     private val sharedPreferences: SharedPreferences
 
-    private constructor(context: Context){
+    init {
         sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE)
     }
 

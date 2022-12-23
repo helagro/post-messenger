@@ -9,18 +9,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.TextView
+import se.helagro.postmessenger.network.NetworkHandler
+import se.helagro.postmessenger.network.NetworkHandlerListener
 
 
-class PostHistoryListAdapter :
-    ArrayAdapter<PostItem>, PostHistoryListener, NetworkHandlerListener {
+class PostHistoryListAdapter(context: Context, val postHistory: PostHistory) :
+    ArrayAdapter<PostItem>(context, -1, postHistory), PostHistoryListener, NetworkHandlerListener {
 
     val inflater = LayoutInflater.from(context)
-    val postHistory: PostHistory
-
-    constructor(context: Context, postHistory: PostHistory) :
-            super(context, -1, postHistory) {
-        this.postHistory = postHistory
-    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val postItem = postHistory[position]

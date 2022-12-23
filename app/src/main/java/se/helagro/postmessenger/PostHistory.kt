@@ -1,7 +1,6 @@
 package se.helagro.postmessenger
 
-class PostHistory : ArrayList<PostItem>{
-    constructor()
+class PostHistory() : ArrayList<PostItem>() {
 
     private val listeners = ArrayList<PostHistoryListener>()
 

@@ -1,8 +1,11 @@
-package se.helagro.postmessenger
+package se.helagro.postmessenger.network
 
 import android.os.Handler
 import android.os.Looper
+import se.helagro.postmessenger.PostItem
+import se.helagro.postmessenger.PostItemStatus
 import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
+import se.helagro.postmessenger.StorageHandler
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
@@ -12,7 +15,7 @@ import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 
-class NetworkHandler {
+class NetworkHandler(private val endpoint: String) {
     companion object{
         fun getEndpoint(): String?{
             val storageHandler = StorageHandler.getInstance()
@@ -20,15 +23,12 @@ class NetworkHandler {
         }
     }
 
-    private val endpoint: String
     private val client: HttpURLConnection
 
-    constructor(endpoint: String){
-        this.endpoint = endpoint
+    init {
         val url = URL(endpoint)
         client = url.openConnection() as HttpURLConnection
     }
-
 
     fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
         val mainHandler = Handler(Looper.getMainLooper())
@@ -46,15 +46,18 @@ class NetworkHandler {
     private fun makeRequest(msg: String): Int {
         var connection: HttpURLConnection? = null
         var reader: BufferedReader? = null
+        val data = "&msg=" + URLEncoder.encode(msg, "UTF-8")
+
         try {
             connection = URL(this.endpoint).openConnection() as HttpURLConnection
             connection.connectTimeout = 7000
             connection.requestMethod = "POST"
             connection.doOutput = true
+
             val writer = OutputStreamWriter(connection.outputStream)
-            val myData = "&msg=" + URLEncoder.encode(msg, "UTF-8")
-            writer.write(myData)
+            writer.write(data)
             writer.flush()
+
             reader = BufferedReader(InputStreamReader(connection.inputStream)) //NOTHING WORKS WITHOUT THIS
             return connection.responseCode
         } catch (e: Exception) {
