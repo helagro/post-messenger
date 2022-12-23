@@ -1,15 +1,15 @@
 package se.helagro.postmessenger
 
-class PostItems : ArrayList<PostItem>{
+class PostHistory : ArrayList<PostItem>{
     constructor()
 
-    private val listeners = ArrayList<PostItemsListener>()
+    private val listeners = ArrayList<PostHistoryListener>()
 
-    fun addListener(listener: PostItemsListener){
+    fun addListener(listener: PostHistoryListener){
         listeners.add(listener)
     }
 
-    fun removeListener(listener: PostItemsListener){
+    fun removeListener(listener: PostHistoryListener){
         listeners.remove(listener)
     }
 

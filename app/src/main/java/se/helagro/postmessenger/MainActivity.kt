@@ -19,8 +19,8 @@ class MainActivity : AppCompatActivity() {
             setupViews()
         }
     }
-    val postItems = PostItems()
-    private var postHandler: PostHandler? = null
+    val postHistory = PostHistory()
+    private var networkHandler: NetworkHandler? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,11 +31,10 @@ class MainActivity : AppCompatActivity() {
         if(didSucceed){
             setupViews()
         }
-
     }
 
     private fun initPostHandler(): Boolean{
-        val postHandlerEndpoint = PostHandler.getEndpoint()
+        val postHandlerEndpoint = NetworkHandler.getEndpoint()
         if(postHandlerEndpoint == null) {
             goToSettings()
             return false
@@ -45,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             return false
         }
 
-        postHandler = PostHandler(postHandlerEndpoint)
+        networkHandler = NetworkHandler(postHandlerEndpoint)
         return true
     }
 
@@ -56,13 +55,13 @@ class MainActivity : AppCompatActivity() {
     private fun setupViews(){
         //INPUT_FIELD
         focusOnInputField()
-        val inputFieldListener = InputFieldListener(postHandler!!, postItems)
+        val inputFieldListener = InputFieldListener(networkHandler!!, postHistory)
         inputField.setOnEditorActionListener(inputFieldListener)
 
         //POST_LIST
-        val postListAdapter = PostListAdapter(this, postItems)
+        val postListAdapter = PostHistoryListAdapter(this, postHistory)
         postLogList.adapter = postListAdapter
-        postItems.addListener(postListAdapter)
+        postHistory.addListener(postListAdapter)
     }
 
     private fun focusOnInputField(){
@@ -81,12 +80,8 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    /**
-     * ENDING LIFECYCLE
-     */
-
     override fun onDestroy() {
         super.onDestroy()
-        (postLogList.adapter as PostListAdapter?)?.let { postItems.removeListener(it) }
+        (postLogList.adapter as PostHistoryListAdapter?)?.let { postHistory.removeListener(it) }
     }
 }

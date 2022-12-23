@@ -36,6 +36,4 @@ class StorageHandler {
         editor.putString(id, value)
         editor.commit()
     }
-
-
 }

@@ -4,29 +4,33 @@ import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 
-class InputFieldListener : TextView.OnEditorActionListener, PostHandlerListener{
-    val postHandler: PostHandler
-    val postItems: PostItems
+class InputFieldListener : TextView.OnEditorActionListener, NetworkHandlerListener{
+    val networkHandler : NetworkHandler
+    val postHistory: PostHistory
 
-    constructor(postHandler: PostHandler, postItems: PostItems){
-        this.postHandler = postHandler
-        this.postItems = postItems
+    constructor(networkHandler : NetworkHandler, postHistory: PostHistory){
+        this.networkHandler  = networkHandler
+        this.postHistory = postHistory
     }
 
     override fun onEditorAction(p0: TextView?, actionId: Int, p2: KeyEvent?): Boolean {
-        if(!(actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL)) return false
+        if(!isUserDone(actionId)) return false
         if(p0 == null) return false
 
         val textInput = p0.text.toString()
         val postItem = PostItem(textInput)
-        postItems.add(postItem)
+        postHistory.add(postItem)
 
-        postHandler.sendMessage(postItem, this)
+        networkHandler .sendMessage(postItem, this)
         p0.text = ""
         return true
     }
 
+    fun isUserDone(actionId: Int): Boolean{
+        return actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL
+    }
+
     override fun onUpdate(code: Int) {
-        postItems.alertListeners()
+        postHistory.alertListeners()
     }
 }

@@ -1,5 +1,5 @@
 package se.helagro.postmessenger
 
-interface PostItemsListener {
+interface PostHistoryListener {
     fun update()
 }

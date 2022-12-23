@@ -1,5 +1,5 @@
 package se.helagro.postmessenger
 
-interface PostHandlerListener {
+interface NetworkHandlerListener {
     fun onUpdate(code: Int)
 }

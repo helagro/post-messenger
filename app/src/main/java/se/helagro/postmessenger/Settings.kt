@@ -22,10 +22,10 @@ class Settings: AppCompatActivity() {
         actionBar.setDisplayHomeAsUpEnabled(true)
 
         endpointInput.setText(storageHandler.getString(ENDPOINT_PREFERENCE_ID)?: "")
-        doneBtn.setOnClickListener({
+        doneBtn.setOnClickListener {
             saveSettings()
             finish()
-        })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

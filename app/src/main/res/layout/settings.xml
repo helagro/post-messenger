@@ -49,6 +49,6 @@
         android:layout_margin="30dp"
         android:src="@android:drawable/ic_menu_save"
         android:id="@+id/doneBtn"
-        />
+        android:contentDescription="Save settings" />
 
 </RelativeLayout>

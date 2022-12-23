@@ -2,7 +2,6 @@ package se.helagro.postmessenger
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -13,7 +12,7 @@ import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 
-class PostHandler {
+class NetworkHandler {
     companion object{
         fun getEndpoint(): String?{
             val storageHandler = StorageHandler.getInstance()
@@ -31,10 +30,10 @@ class PostHandler {
     }
 
 
-    fun sendMessage(postItem: PostItem, listener: PostHandlerListener) {
+    fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
         val mainHandler = Handler(Looper.getMainLooper())
         thread{
-            val code = makeResquest(postItem.msg)
+            val code = makeRequest(postItem.msg)
 
             if(code == 200) postItem.status = PostItemStatus.SUCCESS
             else postItem.status = PostItemStatus.FAILURE
@@ -44,26 +43,26 @@ class PostHandler {
         }
     }
 
-    private fun makeResquest(msg: String): Int {
-        var conn: HttpURLConnection? = null
+    private fun makeRequest(msg: String): Int {
+        var connection: HttpURLConnection? = null
         var reader: BufferedReader? = null
         try {
-            conn = URL(this.endpoint).openConnection() as HttpURLConnection
-            conn.connectTimeout = 5000
-            conn.requestMethod = "POST"
-            conn.doOutput = true
-            val wr = OutputStreamWriter(conn.outputStream)
+            connection = URL(this.endpoint).openConnection() as HttpURLConnection
+            connection.connectTimeout = 7000
+            connection.requestMethod = "POST"
+            connection.doOutput = true
+            val writer = OutputStreamWriter(connection.outputStream)
             val myData = "&msg=" + URLEncoder.encode(msg, "UTF-8")
-            wr.write(myData)
-            wr.flush()
-            reader = BufferedReader(InputStreamReader(conn.inputStream)) //NOTHING WORKS WITHOUT THIS
-            return conn.responseCode
+            writer.write(myData)
+            writer.flush()
+            reader = BufferedReader(InputStreamReader(connection.inputStream)) //NOTHING WORKS WITHOUT THIS
+            return connection.responseCode
         } catch (e: Exception) {
             return -1
         } finally {
             try {
                 reader!!.close()
-                conn?.disconnect()
+                connection?.disconnect()
             } catch (e: Exception) {
                 return -1
             }

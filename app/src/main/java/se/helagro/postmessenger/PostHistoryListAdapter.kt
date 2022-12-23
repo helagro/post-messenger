@@ -11,27 +11,30 @@ import android.widget.ImageButton
 import android.widget.TextView
 
 
-class PostListAdapter :
-    ArrayAdapter<PostItem>, PostItemsListener, PostHandlerListener {
+class PostHistoryListAdapter :
+    ArrayAdapter<PostItem>, PostHistoryListener, NetworkHandlerListener {
 
     val inflater = LayoutInflater.from(context)
-    val postItems: PostItems
+    val postHistory: PostHistory
 
-    constructor(context: Context, postItems: PostItems) :
-            super(context, -1, postItems) {
-        this.postItems = postItems
+    constructor(context: Context, postHistory: PostHistory) :
+            super(context, -1, postHistory) {
+        this.postHistory = postHistory
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val postItem = postItems[position]
+        val postItem = postHistory[position]
         val listItem = inflater.inflate(R.layout.listitem_post, null)
         val textView: TextView = listItem.findViewById(R.id.postLogListText)
         textView.text = postItem.msg
 
+
+        //=========== STATUS BUTTON ===========
+
         val statusBtn: ImageButton = listItem.findViewById(R.id.postLogListImgBtn)
         statusBtn.setOnClickListener{
-            val postHandler = PostHandler(PostHandler.getEndpoint()!!)
-            postHandler.sendMessage(postItem, this)
+            val networkHandler  = NetworkHandler(NetworkHandler.getEndpoint()!!)
+            networkHandler .sendMessage(postItem, this)
         }
         when(postItem.status){
             PostItemStatus.SUCCESS -> {
@@ -54,13 +57,17 @@ class PostListAdapter :
     }
 
     override fun update() {
-        if(Looper.getMainLooper() != Looper.myLooper()){
+        if(!isMainThread()){
             return
         }
         notifyDataSetChanged()
     }
 
+    fun isMainThread(): Boolean {
+        return Looper.getMainLooper() != Looper.myLooper()
+    }
+
     override fun onUpdate(code: Int) {
-        postItems.alertListeners()
+        postHistory.alertListeners()
     }
 }
