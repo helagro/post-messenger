@@ -2,6 +2,7 @@ package se.helagro.postmessenger.settings
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.settings.*
@@ -23,7 +24,7 @@ class SettingsActivity: AppCompatActivity() {
 
         doneBtn.setOnClickListener {
             saveSettings()
-            finish()
+            Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -32,15 +33,10 @@ class SettingsActivity: AppCompatActivity() {
         jsonKeyInput.setText(storageHandler.getString(SettingsID.JSON_KEY)?: DefaultSettingsValues.JSON_KEY.value)
     }
 
-    //return-button in actionBar
+    //return-button in actionBar onClick
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         finish()
         return true
-    }
-
-    override fun onPause() {
-        saveSettings()
-        super.onPause()
     }
 
     private fun saveSettings(){

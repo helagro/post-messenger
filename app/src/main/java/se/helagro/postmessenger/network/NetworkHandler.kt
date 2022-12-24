@@ -19,6 +19,9 @@ import kotlin.concurrent.thread
 class NetworkHandler(private val endpoint: String) {
 
     companion object{
+        private val REQUEST_METHOD = "POST"
+        private val CONNECT_TIMEOUT = 7000 // in milliseconds
+
         fun getEndpoint(): String?{
             val storageHandler = StorageHandler.getInstance()
             return storageHandler.getString(SettingsID.ENDPOINT)
@@ -52,15 +55,15 @@ class NetworkHandler(private val endpoint: String) {
 
         try {
             connection = URL(this.endpoint).openConnection() as HttpURLConnection
-            connection.connectTimeout = 7000
-            connection.requestMethod = "POST"
+            connection.connectTimeout = CONNECT_TIMEOUT
+            connection.requestMethod = REQUEST_METHOD
             connection.doOutput = true
 
             val writer = OutputStreamWriter(connection.outputStream)
             writer.write(data)
             writer.flush()
 
-            reader = BufferedReader(InputStreamReader(connection.inputStream)) //NOTHING WORKS WITHOUT THIS
+            reader = BufferedReader(InputStreamReader(connection.inputStream)) //nothing works without this!
             return connection.responseCode
         } catch (e: Exception) {
             return -1
