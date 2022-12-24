@@ -1,5 +1,6 @@
 package se.helagro.postmessenger
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Looper
@@ -18,8 +19,8 @@ import se.helagro.postmessenger.postitem.PostItem
 import se.helagro.postmessenger.postitem.PostItemStatus
 
 
-class PostHistoryListAdapter(context: Context, private val postHistory: PostHistory) :
-    ArrayAdapter<PostItem>(context, -1, postHistory), PostHistoryListener, NetworkHandlerListener {
+class PostHistoryListAdapter(val activity: Activity, private val postHistory: PostHistory) :
+    ArrayAdapter<PostItem>(activity, -1, postHistory), PostHistoryListener, NetworkHandlerListener {
 
     val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -58,14 +59,9 @@ class PostHistoryListAdapter(context: Context, private val postHistory: PostHist
     }
 
     override fun onPostHistoryUpdate() {
-        if(!isMainThread()){
-            return
+        activity.runOnUiThread {
+            notifyDataSetChanged()
         }
-        notifyDataSetChanged()
-    }
-
-    private fun isMainThread(): Boolean {
-        return Looper.getMainLooper() != Looper.myLooper()
     }
 
     override fun onPostItemUpdate(code: Int) {
