@@ -18,10 +18,10 @@ import se.helagro.postmessenger.postitem.PostItem
 import se.helagro.postmessenger.postitem.PostItemStatus
 
 
-class PostHistoryListAdapter(context: Context, val postHistory: PostHistory) :
+class PostHistoryListAdapter(context: Context, private val postHistory: PostHistory) :
     ArrayAdapter<PostItem>(context, -1, postHistory), PostHistoryListener, NetworkHandlerListener {
 
-    val inflater = LayoutInflater.from(context)
+    val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val postItem = postHistory[position]
@@ -64,7 +64,7 @@ class PostHistoryListAdapter(context: Context, val postHistory: PostHistory) :
         notifyDataSetChanged()
     }
 
-    fun isMainThread(): Boolean {
+    private fun isMainThread(): Boolean {
         return Looper.getMainLooper() != Looper.myLooper()
     }
 
