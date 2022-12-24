@@ -1,7 +1,11 @@
 package se.helagro.postmessenger.postitem
 
 class PostItem(val msg: String) {
-    var status = PostItemStatus.LOADING
+    companion object{
+        val INITIAL_STATUS = PostItemStatus.LOADING
+    }
+
+    var status = INITIAL_STATUS
 
     override fun toString(): String {
         return msg

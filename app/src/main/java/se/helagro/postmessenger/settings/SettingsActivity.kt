@@ -9,8 +9,6 @@ import se.helagro.postmessenger.R
 
 
 class SettingsActivity: AppCompatActivity() {
-    companion object{
-    }
 
     private val storageHandler = StorageHandler.getInstance()
 
@@ -34,6 +32,7 @@ class SettingsActivity: AppCompatActivity() {
         jsonKeyInput.setText(storageHandler.getString(SettingsID.JSON_KEY)?: DefaultSettingsValues.JSON_KEY.value)
     }
 
+    //return-button in actionBar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         finish()
         return true

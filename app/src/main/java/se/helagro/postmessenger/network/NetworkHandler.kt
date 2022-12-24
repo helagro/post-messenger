@@ -17,6 +17,7 @@ import kotlin.concurrent.thread
 
 
 class NetworkHandler(private val endpoint: String) {
+
     companion object{
         fun getEndpoint(): String?{
             val storageHandler = StorageHandler.getInstance()
@@ -50,7 +51,7 @@ class NetworkHandler(private val endpoint: String) {
     private fun makeRequest(msg: String): Int {
         var connection: HttpURLConnection? = null
         var reader: BufferedReader? = null
-        val data = "&"+jsonKey+"=" + URLEncoder.encode(msg, "UTF-8")
+        val data = "&" + jsonKey + "=" + URLEncoder.encode(msg, "UTF-8")
 
         try {
             connection = URL(this.endpoint).openConnection() as HttpURLConnection
@@ -68,7 +69,7 @@ class NetworkHandler(private val endpoint: String) {
             return -1
         } finally {
             try {
-                reader!!.close()
+                reader?.close()
                 connection?.disconnect()
             } catch (e: Exception) {
                 return -1
