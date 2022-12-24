@@ -1,4 +1,4 @@
-package se.helagro.postmessenger
+package se.helagro.postmessenger.postitem
 
 class PostItem(val msg: String) {
     var status = PostItemStatus.LOADING

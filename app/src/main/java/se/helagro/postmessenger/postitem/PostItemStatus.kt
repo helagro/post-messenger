@@ -1,4 +1,4 @@
-package se.helagro.postmessenger
+package se.helagro.postmessenger.postitem
 
 enum class PostItemStatus {
     LOADING,

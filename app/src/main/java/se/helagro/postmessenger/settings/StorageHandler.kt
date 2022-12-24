@@ -1,4 +1,4 @@
-package se.helagro.postmessenger
+package se.helagro.postmessenger.settings
 
 import android.app.Activity
 import android.content.Context
@@ -15,7 +15,7 @@ class StorageHandler private constructor(context: Context) {
             instance = StorageHandler(context)
         }
 
-        fun getInstance(): StorageHandler{
+        fun getInstance(): StorageHandler {
             if(instance == null) throw Exception("StorageHandler has not been initialized")
             return instance!!
         }
@@ -27,13 +27,13 @@ class StorageHandler private constructor(context: Context) {
         sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE)
     }
 
-    fun getString(id: String): String?{
-        return sharedPreferences.getString(id, null)
+    fun getString(id: SettingsID): String?{
+        return sharedPreferences.getString(id.value, null)
     }
 
-    fun setString(id: String, value: String){
+    fun setString(id: SettingsID, value: String){
         val editor = sharedPreferences.edit()
-        editor.putString(id, value)
+        editor.putString(id.value, value)
         editor.commit()
     }
 }

@@ -1,4 +1,6 @@
-package se.helagro.postmessenger
+package se.helagro.postmessenger.posthistory
+
+import se.helagro.postmessenger.postitem.PostItem
 
 class PostHistory() : ArrayList<PostItem>() {
 
@@ -20,7 +22,7 @@ class PostHistory() : ArrayList<PostItem>() {
 
     fun alertListeners(){
         for(listener in listeners){
-            listener.update()
+            listener.onPostHistoryUpdate()
         }
     }
 }

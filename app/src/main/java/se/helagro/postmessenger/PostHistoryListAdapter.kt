@@ -9,8 +9,13 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import android.widget.TextView
+import com.google.android.material.R.drawable.ic_mtrl_checked_circle
 import se.helagro.postmessenger.network.NetworkHandler
 import se.helagro.postmessenger.network.NetworkHandlerListener
+import se.helagro.postmessenger.posthistory.PostHistory
+import se.helagro.postmessenger.posthistory.PostHistoryListener
+import se.helagro.postmessenger.postitem.PostItem
+import se.helagro.postmessenger.postitem.PostItemStatus
 
 
 class PostHistoryListAdapter(context: Context, val postHistory: PostHistory) :
@@ -34,7 +39,7 @@ class PostHistoryListAdapter(context: Context, val postHistory: PostHistory) :
         }
         when(postItem.status){
             PostItemStatus.SUCCESS -> {
-                statusBtn.setImageResource(com.google.android.material.R.drawable.ic_mtrl_checked_circle)
+                statusBtn.setImageResource(ic_mtrl_checked_circle)
                 statusBtn.clearColorFilter()
                 statusBtn.isEnabled = false
             }
@@ -52,7 +57,7 @@ class PostHistoryListAdapter(context: Context, val postHistory: PostHistory) :
         return listItem
     }
 
-    override fun update() {
+    override fun onPostHistoryUpdate() {
         if(!isMainThread()){
             return
         }
@@ -63,7 +68,7 @@ class PostHistoryListAdapter(context: Context, val postHistory: PostHistory) :
         return Looper.getMainLooper() != Looper.myLooper()
     }
 
-    override fun onUpdate(code: Int) {
+    override fun onPostItemUpdate(code: Int) {
         postHistory.alertListeners()
     }
 }

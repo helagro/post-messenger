@@ -12,22 +12,29 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import se.helagro.postmessenger.network.NetworkHandler
+import se.helagro.postmessenger.posthistory.PostHistory
+import se.helagro.postmessenger.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
-    val settingsLauncher = registerForActivityResult(StartActivityForResult()) { result: ActivityResult ->
-        val didSucceed = initPostHandler()
-        if(didSucceed){
-            setupViews()
-        }
-    }
     val postHistory = PostHistory()
     private var networkHandler: NetworkHandler? = null
 
+
+    //=========== ENTRY POINTS ===========
+
+    val settingsLauncher = registerForActivityResult(StartActivityForResult()) { _: ActivityResult ->
+        doSetup()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        doSetup()
+    }
+
+
+    private fun doSetup(){
         val didSucceed = initPostHandler()
         if(didSucceed){
             setupViews()
@@ -50,8 +57,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goToSettings(){
-        settingsLauncher.launch(Intent(this, Settings::class.java))
+        settingsLauncher.launch(Intent(this, SettingsActivity::class.java))
     }
+
+
+    //========== VIEW SETUP ==========
 
     private fun setupViews(){
         //INPUT_FIELD
@@ -71,6 +81,9 @@ class MainActivity : AppCompatActivity() {
         imm.showSoftInput(inputField, InputMethodManager.SHOW_IMPLICIT)
     }
 
+
+    //=========== MENU ===========
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.activity_main_app_bar, menu)
         return true
@@ -80,6 +93,8 @@ class MainActivity : AppCompatActivity() {
         goToSettings()
         return true
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

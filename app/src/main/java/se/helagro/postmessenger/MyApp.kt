@@ -1,7 +1,7 @@
 package se.helagro.postmessenger
 
 import android.app.Application
-import android.util.Log
+import se.helagro.postmessenger.settings.StorageHandler
 
 
 class MyApp : Application() {

@@ -1,15 +1,15 @@
-package se.helagro.postmessenger
+package se.helagro.postmessenger.settings
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.settings.*
+import se.helagro.postmessenger.R
 
 
-class Settings: AppCompatActivity() {
+class SettingsActivity: AppCompatActivity() {
     companion object{
-        const val ENDPOINT_PREFERENCE_ID = "endpoint_preference"
     }
 
     private val storageHandler = StorageHandler.getInstance()
@@ -21,11 +21,17 @@ class Settings: AppCompatActivity() {
         val actionBar: ActionBar = supportActionBar!!
         actionBar.setDisplayHomeAsUpEnabled(true)
 
-        endpointInput.setText(storageHandler.getString(ENDPOINT_PREFERENCE_ID)?: "")
+        fillInputFields()
+
         doneBtn.setOnClickListener {
             saveSettings()
             finish()
         }
+    }
+
+    private fun fillInputFields(){
+        endpointInput.setText(storageHandler.getString(SettingsID.ENDPOINT)?: "")
+        jsonKeyInput.setText(storageHandler.getString(SettingsID.JSON_KEY)?: DefaultSettingsValues.JSON_KEY.value)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -39,6 +45,6 @@ class Settings: AppCompatActivity() {
     }
 
     private fun saveSettings(){
-        storageHandler.setString(ENDPOINT_PREFERENCE_ID, endpointInput.text.toString())
+        storageHandler.setString(SettingsID.ENDPOINT, endpointInput.text.toString())
     }
 }

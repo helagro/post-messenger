@@ -2,10 +2,11 @@ package se.helagro.postmessenger.network
 
 import android.os.Handler
 import android.os.Looper
-import se.helagro.postmessenger.PostItem
-import se.helagro.postmessenger.PostItemStatus
-import se.helagro.postmessenger.Settings.Companion.ENDPOINT_PREFERENCE_ID
-import se.helagro.postmessenger.StorageHandler
+import se.helagro.postmessenger.postitem.PostItem
+import se.helagro.postmessenger.postitem.PostItemStatus
+import se.helagro.postmessenger.settings.DefaultSettingsValues
+import se.helagro.postmessenger.settings.SettingsID
+import se.helagro.postmessenger.settings.StorageHandler
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
@@ -19,15 +20,17 @@ class NetworkHandler(private val endpoint: String) {
     companion object{
         fun getEndpoint(): String?{
             val storageHandler = StorageHandler.getInstance()
-            return storageHandler.getString(ENDPOINT_PREFERENCE_ID)
+            return storageHandler.getString(SettingsID.ENDPOINT)
         }
     }
 
     private val client: HttpURLConnection
+    private val jsonKey: String
 
     init {
         val url = URL(endpoint)
         client = url.openConnection() as HttpURLConnection
+        jsonKey = StorageHandler.getInstance().getString(SettingsID.JSON_KEY) ?: DefaultSettingsValues.JSON_KEY.value
     }
 
     fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
@@ -38,7 +41,7 @@ class NetworkHandler(private val endpoint: String) {
             if(code == 200) postItem.status = PostItemStatus.SUCCESS
             else postItem.status = PostItemStatus.FAILURE
             mainHandler.post(thread {
-                listener.onUpdate(code)
+                listener.onPostItemUpdate(code)
             })
         }
     }
@@ -46,7 +49,7 @@ class NetworkHandler(private val endpoint: String) {
     private fun makeRequest(msg: String): Int {
         var connection: HttpURLConnection? = null
         var reader: BufferedReader? = null
-        val data = "&msg=" + URLEncoder.encode(msg, "UTF-8")
+        val data = "&"+jsonKey+"=" + URLEncoder.encode(msg, "UTF-8")
 
         try {
             connection = URL(this.endpoint).openConnection() as HttpURLConnection
