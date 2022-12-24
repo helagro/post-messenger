@@ -46,5 +46,6 @@ class SettingsActivity: AppCompatActivity() {
 
     private fun saveSettings(){
         storageHandler.setString(SettingsID.ENDPOINT, endpointInput.text.toString())
+        storageHandler.setString(SettingsID.JSON_KEY, jsonKeyInput.text.toString())
     }
 }

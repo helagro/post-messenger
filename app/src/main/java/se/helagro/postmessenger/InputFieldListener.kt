@@ -11,20 +11,20 @@ import se.helagro.postmessenger.postitem.PostItem
 class InputFieldListener(val networkHandler: NetworkHandler, val postHistory: PostHistory) :
     TextView.OnEditorActionListener, NetworkHandlerListener {
 
-    override fun onEditorAction(p0: TextView?, actionId: Int, p2: KeyEvent?): Boolean {
+    override fun onEditorAction(textView: TextView?, actionId: Int, p2: KeyEvent?): Boolean {
         if (!isUserDone(actionId)) return false
-        if (p0 == null) return false
+        if (textView == null) return false
 
-        val textInput = p0.text.toString()
-        val postItem = PostItem(textInput)
-        postHistory.add(postItem)
+        val textInput = textView.text.toString()
+        val newPostItem = PostItem(textInput)
+        postHistory.add(newPostItem)
 
-        networkHandler.sendMessage(postItem, this)
-        p0.text = ""
+        networkHandler.sendMessage(newPostItem, this)
+        textView.text = ""
         return true
     }
 
-    fun isUserDone(actionId: Int): Boolean {
+    private fun isUserDone(actionId: Int): Boolean {
         return actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL
     }
 

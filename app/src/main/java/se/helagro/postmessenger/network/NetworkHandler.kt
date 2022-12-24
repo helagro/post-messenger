@@ -36,12 +36,13 @@ class NetworkHandler(private val endpoint: String) {
     fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
         val mainHandler = Handler(Looper.getMainLooper())
         thread{
-            val code = makeRequest(postItem.msg)
+            val responseCode = makeRequest(postItem.msg)
 
-            if(code == 200) postItem.status = PostItemStatus.SUCCESS
+            if(responseCode == 200) postItem.status = PostItemStatus.SUCCESS
             else postItem.status = PostItemStatus.FAILURE
+
             mainHandler.post(thread {
-                listener.onPostItemUpdate(code)
+                listener.onPostItemUpdate(responseCode)
             })
         }
     }
