@@ -2,19 +2,18 @@ package se.helagro.postmessenger.settings
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.content.SharedPreferences
+import android.app.Application
 
 
 //NOT THREADING SAFE
-class StorageHandler private constructor(context: Context) {
+class StorageHandler private constructor(application: Application) {
 
     companion object{
         private const val PREFERENCES_NAME = "main_preferences"
         private var instance: StorageHandler? = null
 
-        fun init(context: Context){
-            instance = StorageHandler(context)
+        fun init(application: Application){
+            instance = StorageHandler(application)
         }
 
         fun getInstance(): StorageHandler {
@@ -23,7 +22,7 @@ class StorageHandler private constructor(context: Context) {
         }
     }
 
-    private val sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE)
+    private val sharedPreferences = application.getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE)
 
     fun getString(id: SettingsID): String?{
         return sharedPreferences.getString(id.value, null)

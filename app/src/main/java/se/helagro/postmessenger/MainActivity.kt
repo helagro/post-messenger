@@ -16,7 +16,7 @@ import se.helagro.postmessenger.posthistory.PostHistory
 import se.helagro.postmessenger.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
-    val postHistory = PostHistory()
+    private val postHistory = PostHistory()
     private var networkHandler: NetworkHandler? = null
 
 
@@ -34,21 +34,23 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    // ========== CODE SETUP ==========
+
     private fun doSetup(){
         val didSucceed = initPostHandler()
         if(didSucceed){
             setupViews()
+        } else {
+            goToSettings()
         }
     }
 
     private fun initPostHandler(): Boolean{
         val postHandlerEndpoint = NetworkHandler.getEndpoint()
         if(postHandlerEndpoint == null) {
-            goToSettings()
             return false
         } else if(!URLUtil.isValidUrl(postHandlerEndpoint)){
             Toast.makeText(this, "Invalid endpoint URL", Toast.LENGTH_LONG).show()
-            goToSettings()
             return false
         }
 

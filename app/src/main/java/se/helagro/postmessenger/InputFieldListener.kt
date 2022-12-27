@@ -15,8 +15,8 @@ class InputFieldListener(val networkHandler: NetworkHandler, val postHistory: Po
         if (!isUserDone(actionId)) return false
         if (textView == null) return false
 
-        val textInput = textView.text.toString()
-        val newPostItem = PostItem(textInput)
+        val input = textView.text.toString()
+        val newPostItem = PostItem(input)
         postHistory.add(newPostItem)
 
         networkHandler.sendMessage(newPostItem, this)

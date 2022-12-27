@@ -1,9 +1,7 @@
 package se.helagro.postmessenger
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Color
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,18 +24,34 @@ class PostHistoryListAdapter(val activity: Activity, private val postHistory: Po
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val postItem = postHistory[position]
-        val listItem = inflater.inflate(R.layout.listitem_post, null)
-        val textView: TextView = listItem.findViewById(R.id.postLogListText)
-        textView.text = postItem.msg
+        val viewHolder: PostHistoryViewHolder
+        val listItem: View
 
+        if(convertView == null){
+            viewHolder = PostHistoryViewHolder()
+            listItem = inflater.inflate(R.layout.listitem_post, parent)
 
-        //=========== STATUS BUTTON ===========
+            viewHolder.textView = listItem.findViewById(R.id.postLogListText)
+            viewHolder.statusBtn = listItem.findViewById(R.id.postLogListImgBtn)
 
-        val statusBtn: ImageButton = listItem.findViewById(R.id.postLogListImgBtn)
-        statusBtn.setOnClickListener{
-            val networkHandler  = NetworkHandler(NetworkHandler.getEndpoint()!!)
-            networkHandler .sendMessage(postItem, this)
+            viewHolder.statusBtn.setOnClickListener{
+                val networkHandler = NetworkHandler(NetworkHandler.getEndpoint()!!)
+                networkHandler.sendMessage(postItem, this)
+            }
+
+            listItem.tag = viewHolder
+        } else {
+            viewHolder = convertView.tag as PostHistoryViewHolder
+            listItem = convertView
         }
+
+        viewHolder.textView.text = postItem.msg
+        setStatusBtnStatus(postItem, viewHolder.statusBtn)
+
+        return listItem
+    }
+
+    private fun setStatusBtnStatus(postItem: PostItem, statusBtn: ImageButton){
         when(postItem.status){
             PostItemStatus.SUCCESS -> {
                 statusBtn.setImageResource(ic_mtrl_checked_circle)
@@ -46,6 +60,7 @@ class PostHistoryListAdapter(val activity: Activity, private val postHistory: Po
             }
             PostItemStatus.LOADING -> {
                 statusBtn.setImageResource(android.R.color.transparent)
+                statusBtn.clearColorFilter()
                 statusBtn.isEnabled = false
             }
             PostItemStatus.FAILURE -> {
@@ -54,8 +69,6 @@ class PostHistoryListAdapter(val activity: Activity, private val postHistory: Po
                 statusBtn.isEnabled = true
             }
         }
-
-        return listItem
     }
 
     override fun onPostHistoryUpdate() {
