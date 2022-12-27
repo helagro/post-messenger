@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
-import android.widget.TextView
 import com.google.android.material.R.drawable.ic_mtrl_checked_circle
 import se.helagro.postmessenger.network.NetworkHandler
 import se.helagro.postmessenger.network.NetworkHandlerListener
@@ -17,26 +16,25 @@ import se.helagro.postmessenger.postitem.PostItem
 import se.helagro.postmessenger.postitem.PostItemStatus
 
 
-class PostHistoryListAdapter(val activity: Activity, private val postHistory: PostHistory) :
+class PostHistoryListAdapter(private val activity: Activity, private val postHistory: PostHistory) :
     ArrayAdapter<PostItem>(activity, -1, postHistory), PostHistoryListener, NetworkHandlerListener {
 
-    val inflater: LayoutInflater = LayoutInflater.from(context)
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val postItem = postHistory[position]
         val viewHolder: PostHistoryViewHolder
         val listItem: View
 
-        if(convertView == null){
+        if (convertView == null) {
             viewHolder = PostHistoryViewHolder()
             listItem = inflater.inflate(R.layout.listitem_post, parent)
 
             viewHolder.textView = listItem.findViewById(R.id.postLogListText)
             viewHolder.statusBtn = listItem.findViewById(R.id.postLogListImgBtn)
 
-            viewHolder.statusBtn.setOnClickListener{
-                val networkHandler = NetworkHandler()
-                networkHandler.sendMessage(postItem, this)
+            viewHolder.statusBtn.setOnClickListener {
+                NetworkHandler.sendMessage(postItem, this)
             }
 
             listItem.tag = viewHolder
@@ -51,8 +49,8 @@ class PostHistoryListAdapter(val activity: Activity, private val postHistory: Po
         return listItem
     }
 
-    private fun setStatusBtnStatus(postItem: PostItem, statusBtn: ImageButton){
-        when(postItem.status){
+    private fun setStatusBtnStatus(postItem: PostItem, statusBtn: ImageButton) {
+        when (postItem.status) {
             PostItemStatus.SUCCESS -> {
                 statusBtn.setImageResource(ic_mtrl_checked_circle)
                 statusBtn.clearColorFilter()

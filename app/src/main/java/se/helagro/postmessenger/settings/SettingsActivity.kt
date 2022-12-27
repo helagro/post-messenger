@@ -1,6 +1,5 @@
 package se.helagro.postmessenger.settings
 
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.MenuItem
@@ -14,6 +13,9 @@ import se.helagro.postmessenger.R
 class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     private val settingsValues = SettingsValues.getInstance()
 
+
+    // ========== SETUP ==========
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -23,8 +25,10 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
         fillInputFields()
 
         doneBtn.setOnClickListener {
-            saveSettings()
-            Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show()
+            val success = saveSettings()
+            if(success){
+                Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -33,16 +37,30 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
         jsonKeyInput.setText(settingsValues.jsonKey)
     }
 
-    //return-button in actionBar onClick
+
+
+    // ========== LEAVING ACTIVITY ==========
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(hasUnsavedChanges()){
             showUnsavedChangesDialog()
         } else {
             finish()
         }
-
         return true
     }
+
+    override fun onBackPressed() {
+        if(hasUnsavedChanges()){
+            showUnsavedChangesDialog()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+
+
+    // ========== HANDLE UNSAVED CHANGES ==========
 
     private fun hasUnsavedChanges(): Boolean {
         return settingsValues.endPoint != endpointInput.text.toString()
@@ -61,11 +79,15 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
             }
     }
 
-    private fun saveSettings() {
+
+
+    // ========== SAVING ==========
+
+    private fun saveSettings(): Boolean{
         settingsValues.endPoint = endpointInput.text.toString()
         settingsValues.jsonKey = jsonKeyInput.text.toString()
 
-        settingsValues.save(this)
+        return settingsValues.save(this)
     }
 
     override fun onInvalidSettings() {

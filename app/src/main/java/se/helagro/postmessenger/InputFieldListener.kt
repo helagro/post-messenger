@@ -8,7 +8,7 @@ import se.helagro.postmessenger.network.NetworkHandlerListener
 import se.helagro.postmessenger.posthistory.PostHistory
 import se.helagro.postmessenger.postitem.PostItem
 
-class InputFieldListener(val networkHandler: NetworkHandler, val postHistory: PostHistory) :
+class InputFieldListener(private val postHistory: PostHistory) :
     TextView.OnEditorActionListener, NetworkHandlerListener {
 
     override fun onEditorAction(textView: TextView?, actionId: Int, p2: KeyEvent?): Boolean {
@@ -19,7 +19,8 @@ class InputFieldListener(val networkHandler: NetworkHandler, val postHistory: Po
         val newPostItem = PostItem(input)
         postHistory.add(newPostItem)
 
-        networkHandler.sendMessage(newPostItem, this)
+        NetworkHandler.sendMessage(newPostItem, this)
+
         textView.text = ""
         return true
     }

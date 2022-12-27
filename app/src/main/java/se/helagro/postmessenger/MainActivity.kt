@@ -15,7 +15,6 @@ import se.helagro.postmessenger.settings.SettingsValues
 
 class MainActivity : AppCompatActivity() {
     private val postHistory = PostHistory()
-    private var networkHandler: NetworkHandler? = null
 
 
     //=========== ENTRY POINTS ===========
@@ -36,7 +35,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun attemptSetup(){
         if(SettingsValues.getInstance().areSettingsValid()){
-            networkHandler = NetworkHandler()
             setupViews()
         } else {
             goToSettings()
@@ -53,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupViews(){
         //INPUT_FIELD
         focusOnInputField()
-        val inputFieldListener = InputFieldListener(networkHandler!!, postHistory)
+        val inputFieldListener = InputFieldListener(postHistory)
         inputField.setOnEditorActionListener(inputFieldListener)
 
         //POST_LIST
