@@ -35,7 +35,7 @@ class PostHistoryListAdapter(val activity: Activity, private val postHistory: Po
             viewHolder.statusBtn = listItem.findViewById(R.id.postLogListImgBtn)
 
             viewHolder.statusBtn.setOnClickListener{
-                val networkHandler = NetworkHandler(NetworkHandler.getEndpoint()!!)
+                val networkHandler = NetworkHandler()
                 networkHandler.sendMessage(postItem, this)
             }
 

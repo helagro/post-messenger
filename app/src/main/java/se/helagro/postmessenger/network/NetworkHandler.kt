@@ -3,10 +3,11 @@ package se.helagro.postmessenger.network
 import se.helagro.postmessenger.postitem.PostItem
 import se.helagro.postmessenger.postitem.PostItemStatus
 import se.helagro.postmessenger.settings.SettingsValues
-import se.helagro.postmessenger.settings.preferenceInfo
 import se.helagro.postmessenger.settings.StorageHandler
 import java.io.BufferedReader
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.io.OutputStream
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -14,20 +15,10 @@ import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 
-class NetworkHandler(private val endpoint: String) {
-
-    companion object {
-        private const val REQUEST_METHOD = "POST"
-        private const val CONNECT_TIMEOUT = 7000 // in milliseconds
-        private const val ERROR_CODE = -1
-
-        fun getEndpoint(): String? {
-            val storageHandler = StorageHandler.getInstance()
-            return SettingsValues.getInstance().endPoint
-        }
-    }
-
-    private val jsonKey = SettingsValues.getInstance().jsonKey
+object NetworkHandler {
+    private const val REQUEST_METHOD = "POST"
+    private const val CONNECT_TIMEOUT = 7000 // in milliseconds
+    private const val ERROR_CODE = -1
 
     fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
         thread {
@@ -41,35 +32,43 @@ class NetworkHandler(private val endpoint: String) {
     }
 
     private fun makeRequest(msg: String): Int {
-        var connection: HttpURLConnection? = null
-        var reader: BufferedReader? = null
-        var resCode: Int
-        val data = "&" + jsonKey + "=" + URLEncoder.encode(msg, "UTF-8")
+        return try {
+            val connection = setupConnection()
 
-        try {
-            connection = URL(this.endpoint).openConnection() as HttpURLConnection
-            connection.connectTimeout = CONNECT_TIMEOUT
-            connection.requestMethod = REQUEST_METHOD
-            connection.doOutput = true
+            writeData(connection.outputStream, msg)
+            readData(connection.inputStream)
 
-            val writer = OutputStreamWriter(connection.outputStream)
-            writer.write(data)
-            writer.flush()
+            connection.disconnect()
 
-            reader =
-                BufferedReader(InputStreamReader(connection.inputStream)) //nothing works without this!
-            resCode = connection.responseCode
+            connection.responseCode //could be problematic - is closed
         } catch (_: Exception) {
-            resCode = ERROR_CODE
+            ERROR_CODE
         }
-
-        // ========== CLOSING ==========
-        try {
-            reader?.close()
-            connection?.disconnect()
-        } catch (_: Exception) { }
-
-        return resCode
     }
 
+    private fun setupConnection(): HttpURLConnection {
+        val endpoint = SettingsValues.getInstance().endPoint
+        val connection = URL(endpoint).openConnection() as HttpURLConnection
+        connection.connectTimeout = CONNECT_TIMEOUT
+        connection.requestMethod = REQUEST_METHOD
+        connection.doOutput = true
+        return connection
+    }
+
+    private fun writeData(stream: OutputStream, msg: String){
+        val jsonKey = SettingsValues.getInstance().jsonKey
+        val data = "&" + jsonKey + "=" + URLEncoder.encode(msg, "UTF-8")
+
+        val writer = OutputStreamWriter(stream)
+        writer.write(data)
+        writer.flush()
+        writer.close()
+    }
+
+    //don't know why this is needed, but it really is
+    private fun readData(stream: InputStream){
+        val reader =
+            BufferedReader(InputStreamReader(stream))
+        reader.close()
+    }
 }

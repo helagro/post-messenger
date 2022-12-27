@@ -5,15 +5,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
-import android.webkit.URLUtil
-import android.widget.Toast
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import se.helagro.postmessenger.network.NetworkHandler
 import se.helagro.postmessenger.posthistory.PostHistory
 import se.helagro.postmessenger.settings.SettingsActivity
+import se.helagro.postmessenger.settings.SettingsValues
 
 class MainActivity : AppCompatActivity() {
     private val postHistory = PostHistory()
@@ -22,40 +20,27 @@ class MainActivity : AppCompatActivity() {
 
     //=========== ENTRY POINTS ===========
 
-    val settingsLauncher = registerForActivityResult(StartActivityForResult()) {
-        doSetup()
+    private val settingsLauncher = registerForActivityResult(StartActivityForResult()) {
+        attemptSetup()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        doSetup()
+        attemptSetup()
     }
 
 
-    // ========== CODE SETUP ==========
 
-    private fun doSetup(){
-        val didSucceed = initPostHandler()
-        if(didSucceed){
+
+    private fun attemptSetup(){
+        if(SettingsValues.getInstance().areSettingsValid()){
+            networkHandler = NetworkHandler()
             setupViews()
         } else {
             goToSettings()
         }
-    }
-
-    private fun initPostHandler(): Boolean{
-        val postHandlerEndpoint = NetworkHandler.getEndpoint()
-        if(postHandlerEndpoint == null) {
-            return false
-        } else if(!URLUtil.isValidUrl(postHandlerEndpoint)){
-            Toast.makeText(this, "Invalid endpoint URL", Toast.LENGTH_LONG).show()
-            return false
-        }
-
-        networkHandler = NetworkHandler(postHandlerEndpoint)
-        return true
     }
 
     private fun goToSettings(){

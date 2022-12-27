@@ -1,5 +1,9 @@
 package se.helagro.postmessenger.settings
 
+import android.content.Context
+import android.webkit.URLUtil
+import android.widget.Toast
+
 class SettingsValues private constructor() {
     companion object {
         private var instance: SettingsValues? = null
@@ -12,11 +16,20 @@ class SettingsValues private constructor() {
 
     private val storageHandler = StorageHandler.getInstance()
 
-    var endPoint = storageHandler.getString(preferenceInfo.ENDPOINT)
-    var jsonKey = storageHandler.getString(preferenceInfo.JSON_KEY)
+    var endPoint = storageHandler.getString(PreferenceInfo.ENDPOINT)
+    var jsonKey = storageHandler.getString(PreferenceInfo.JSON_KEY)
 
-    fun save(){
-        storageHandler.setString(preferenceInfo.ENDPOINT, endPoint)
-        storageHandler.setString(preferenceInfo.JSON_KEY, jsonKey)
+
+    fun areSettingsValid(): Boolean{
+        return isEndpointValid()
+    }
+
+    fun isEndpointValid(): Boolean{
+        return URLUtil.isValidUrl(endPoint)
+    }
+
+    fun save(invalidSettingsListener: InvalidSettingsListener){
+        storageHandler.setString(PreferenceInfo.ENDPOINT, endPoint)
+        storageHandler.setString(PreferenceInfo.JSON_KEY, jsonKey)
     }
 }

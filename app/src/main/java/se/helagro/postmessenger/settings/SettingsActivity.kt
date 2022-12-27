@@ -1,7 +1,7 @@
 package se.helagro.postmessenger.settings
 
+import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.settings.*
 import se.helagro.postmessenger.R
 
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     private val settingsValues = SettingsValues.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +65,21 @@ class SettingsActivity : AppCompatActivity() {
         settingsValues.endPoint = endpointInput.text.toString()
         settingsValues.jsonKey = jsonKeyInput.text.toString()
 
-        settingsValues.save()
+        settingsValues.save(this)
     }
+
+    override fun onInvalidSettings() {
+        showInvalidSettingsMsg()
+    }
+
+    private fun showInvalidSettingsMsg(){
+        var message = "Could not save settings"
+
+        if(settingsValues.isEndpointValid()){
+            message += ", endpoint url is invalid"
+        }
+
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
 }
