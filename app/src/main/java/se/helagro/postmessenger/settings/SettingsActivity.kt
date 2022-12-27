@@ -1,6 +1,7 @@
 package se.helagro.postmessenger.settings
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -11,10 +12,11 @@ import se.helagro.postmessenger.R
 
 
 class SettingsActivity : AppCompatActivity() {
-    private val settingsValues = SettingsValues()
+    private val settingsValues = SettingsValues.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.settings)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
@@ -65,5 +67,4 @@ class SettingsActivity : AppCompatActivity() {
 
         settingsValues.save()
     }
-
 }

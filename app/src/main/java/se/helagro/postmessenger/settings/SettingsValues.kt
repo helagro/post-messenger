@@ -1,6 +1,15 @@
 package se.helagro.postmessenger.settings
 
-class SettingsValues {
+class SettingsValues private constructor() {
+    companion object {
+        private var instance: SettingsValues? = null
+
+        fun getInstance(): SettingsValues{
+            if(instance == null) instance = SettingsValues()
+            return instance!!
+        }
+    }
+
     private val storageHandler = StorageHandler.getInstance()
 
     var endPoint = storageHandler.getString(preferenceInfo.ENDPOINT)
