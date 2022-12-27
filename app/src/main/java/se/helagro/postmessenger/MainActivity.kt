@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     //=========== ENTRY POINTS ===========
 
-    val settingsLauncher = registerForActivityResult(StartActivityForResult()) { _: ActivityResult ->
+    val settingsLauncher = registerForActivityResult(StartActivityForResult()) {
         doSetup()
     }
 

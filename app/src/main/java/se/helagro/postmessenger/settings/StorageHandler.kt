@@ -24,14 +24,15 @@ class StorageHandler private constructor(application: Application) {
 
     private val sharedPreferences = application.getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE)
 
-    fun getString(id: SettingsID): String?{
-        return sharedPreferences.getString(id.value, null)
+    fun getString(preferenceInfo: preferenceInfo): String{
+        val defaultVal = preferenceInfo.defaultVal as String
+        return sharedPreferences.getString(preferenceInfo.id, defaultVal)!!
     }
 
     @SuppressLint("ApplySharedPref")
-    fun setString(id: SettingsID, value: String){
+    fun setString(id: preferenceInfo, value: String){
         val editor = sharedPreferences.edit()
-        editor.putString(id.value, value)
+        editor.putString(id.id, value)
         editor.commit()
     }
 }

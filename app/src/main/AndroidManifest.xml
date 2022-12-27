@@ -19,13 +19,15 @@
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="stateVisible"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode= "singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".settings.SettingsActivity">
+        <activity android:name=".settings.SettingsActivity"
+            android:launchMode= "singleInstance">
 
         </activity>
     </application>

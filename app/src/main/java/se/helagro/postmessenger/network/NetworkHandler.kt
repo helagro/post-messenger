@@ -2,8 +2,7 @@ package se.helagro.postmessenger.network
 
 import se.helagro.postmessenger.postitem.PostItem
 import se.helagro.postmessenger.postitem.PostItemStatus
-import se.helagro.postmessenger.settings.DefaultSettingsValues
-import se.helagro.postmessenger.settings.SettingsID
+import se.helagro.postmessenger.settings.preferenceInfo
 import se.helagro.postmessenger.settings.StorageHandler
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -23,13 +22,11 @@ class NetworkHandler(private val endpoint: String) {
 
         fun getEndpoint(): String? {
             val storageHandler = StorageHandler.getInstance()
-            return storageHandler.getString(SettingsID.ENDPOINT)
+            return storageHandler.getString(preferenceInfo.ENDPOINT)
         }
     }
 
-    private val jsonKey = StorageHandler.getInstance().getString(SettingsID.JSON_KEY)
-        ?: DefaultSettingsValues.JSON_KEY.value
-
+    private val jsonKey = StorageHandler.getInstance().getString(preferenceInfo.JSON_KEY)
 
     fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
         thread {
