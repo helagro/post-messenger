@@ -1,11 +1,16 @@
 package se.helagro.postmessenger.settings
 
 import android.content.DialogInterface
+import android.database.DatabaseUtils
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import kotlinx.android.synthetic.main.settings.*
 import se.helagro.postmessenger.R
 
@@ -19,7 +24,9 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.settings)
+        //setContentView(R.layout.settings)
+        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        DataBindingUtil.inflate<ViewDataBinding>(inflater, R.layout.settings, null, false)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         fillInputFields()
@@ -41,21 +48,29 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
 
     // ========== LEAVING ACTIVITY ==========
 
+    //only used by back btn
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(hasUnsavedChanges()){
-            showUnsavedChangesDialog()
-        } else {
-            finish()
-        }
+        val canLeave = handleLeaving()
+        if(canLeave) finish()
         return true
     }
 
     override fun onBackPressed() {
+        val canLeave = handleLeaving()
+        if(canLeave) super.onBackPressed()
+    }
+
+    private fun handleLeaving(): Boolean{
         if(hasUnsavedChanges()){
             showUnsavedChangesDialog()
-        } else {
-            super.onBackPressed()
+            return false
         }
+        if(!settingsValues.areSettingsValid()){
+            showInvalidSettingsMsg()
+            return false
+        }
+
+        return true
     }
 
 
@@ -77,6 +92,7 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
             .setNegativeButton("No") { _: DialogInterface, _: Int ->
                 finish()
             }
+            .show()
     }
 
 
@@ -95,10 +111,10 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     }
 
     private fun showInvalidSettingsMsg(){
-        var message = "Could not save settings"
+        var message = ""
 
-        if(settingsValues.isEndpointValid()){
-            message += ", endpoint url is invalid"
+        if(!settingsValues.isEndpointValid()){
+            message = "Endpoint URL is invalid"
         }
 
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()

@@ -21,11 +21,16 @@ object NetworkHandler {
     private const val ERROR_CODE = -1
 
     fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
+        postItem.status = PostItemStatus.LOADING //to display right in views
         thread {
             val responseCode = makeRequest(postItem.msg)
 
-            if (responseCode == 200) postItem.status = PostItemStatus.SUCCESS
-            else postItem.status = PostItemStatus.FAILURE
+            if (responseCode == 200) {
+                postItem.status = PostItemStatus.SUCCESS
+            }
+            else {
+                postItem.status = PostItemStatus.FAILURE
+            }
 
             listener.onPostItemUpdate(responseCode)
         }

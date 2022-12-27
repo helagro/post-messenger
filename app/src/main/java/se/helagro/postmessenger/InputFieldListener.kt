@@ -12,8 +12,7 @@ class InputFieldListener(private val postHistory: PostHistory) :
     TextView.OnEditorActionListener, NetworkHandlerListener {
 
     override fun onEditorAction(textView: TextView?, actionId: Int, p2: KeyEvent?): Boolean {
-        if (!isUserDone(actionId)) return false
-        if (textView == null) return false
+        if (!isUserDone(actionId) || textView == null) return false
 
         val input = textView.text.toString()
         val newPostItem = PostItem(input)

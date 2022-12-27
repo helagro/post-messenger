@@ -28,13 +28,14 @@ class PostHistoryListAdapter(private val activity: Activity, private val postHis
 
         if (convertView == null) {
             viewHolder = PostHistoryViewHolder()
-            listItem = inflater.inflate(R.layout.listitem_post, parent)
+            listItem = inflater.inflate(R.layout.listitem_post, null)
 
             viewHolder.textView = listItem.findViewById(R.id.postLogListText)
             viewHolder.statusBtn = listItem.findViewById(R.id.postLogListImgBtn)
 
             viewHolder.statusBtn.setOnClickListener {
                 NetworkHandler.sendMessage(postItem, this)
+                setStatusBtnStatus(postItem, viewHolder.statusBtn)
             }
 
             listItem.tag = viewHolder
@@ -58,7 +59,6 @@ class PostHistoryListAdapter(private val activity: Activity, private val postHis
             }
             PostItemStatus.LOADING -> {
                 statusBtn.setImageResource(android.R.color.transparent)
-                statusBtn.clearColorFilter()
                 statusBtn.isEnabled = false
             }
             PostItemStatus.FAILURE -> {

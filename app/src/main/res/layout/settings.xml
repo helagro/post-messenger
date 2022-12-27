@@ -19,15 +19,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="10dp"
+            <include
                 layout="@layout/settings_label"
-                android:text="Endpoint URL"
-                android:textSize="17sp"
-                android:gravity="center_vertical"
+                app:text="Endpofint URL"
                 />
             <EditText
                 android:layout_width="0dp"
@@ -36,6 +30,7 @@
                 android:id="@+id/endpointInput"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="20dp"
+                android:maxLines="1"
                 />
         </LinearLayout>
 
@@ -60,6 +55,7 @@
                 android:id="@+id/jsonKeyInput"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="20dp"
+                android:maxLines="1"
                 />
         </LinearLayout>
 

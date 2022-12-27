@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
     private fun attemptSetup(){
         if(SettingsValues.getInstance().areSettingsValid()){
             setupViews()
