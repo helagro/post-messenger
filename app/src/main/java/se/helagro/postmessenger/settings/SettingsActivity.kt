@@ -1,11 +1,9 @@
 package se.helagro.postmessenger.settings
 
 import android.content.DialogInterface
-import android.database.DatabaseUtils
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
-import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +16,9 @@ import se.helagro.postmessenger.R
 class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     private val settingsValues = SettingsValues.getInstance()
 
+    private lateinit var jsonKeyEditText: EditText
+    private lateinit var endpointEditText: EditText
+
 
     // ========== SETUP ==========
 
@@ -27,7 +28,7 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
         DataBindingUtil.setContentView<ViewDataBinding>(this, R.layout.settings)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        fillInputFields()
+        initializeInputs()
 
         doneBtn.setOnClickListener {
             val success = saveSettings()
@@ -37,9 +38,12 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
         }
     }
 
-    private fun fillInputFields() {
-        endpointInput.setText(settingsValues.endPoint)
-        jsonKeyInput.setText(settingsValues.jsonKey)
+    private fun initializeInputs(){
+        jsonKeyEditText = jsonKeyInput as EditText
+        endpointEditText = endpointInput as EditText
+
+        endpointEditText.setText(settingsValues.endPoint)
+        jsonKeyEditText.setText(settingsValues.jsonKey)
     }
 
 
@@ -76,15 +80,17 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     // ========== HANDLE UNSAVED CHANGES ==========
 
     private fun hasUnsavedChanges(): Boolean {
-        return settingsValues.endPoint != endpointInput.text.toString()
-                || settingsValues.jsonKey != jsonKeyInput.text.toString()
+        return settingsValues.endPoint != endpointEditText.text.toString()
+                || settingsValues.jsonKey != jsonKeyEditText.text.toString()
     }
 
     private fun showUnsavedChangesDialog(){
         AlertDialog.Builder(this)
             .setTitle("Do you want to save the changes?")
             .setPositiveButton("Yes") { _: DialogInterface, _: Int ->
-                handleLeaving()
+                saveSettings()
+                val canLeave = handleLeaving()
+                if(canLeave) finish()
             }
             .setNegativeButton("No") { _: DialogInterface, _: Int ->
                 finish()
@@ -97,8 +103,8 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     // ========== SAVING ==========
 
     private fun saveSettings(): Boolean{
-        settingsValues.endPoint = endpointInput.text.toString()
-        settingsValues.jsonKey = jsonKeyInput.text.toString()
+        settingsValues.endPoint = endpointEditText.text.toString()
+        settingsValues.jsonKey = jsonKeyEditText.text.toString()
 
         return settingsValues.save(this)
     }

@@ -20,16 +20,12 @@
 
                 <include
                     layout="@layout/settings_label"
-                    app:title="@{@string/endpoint_url}" />
+                    app:title='@{"Endpoint URL"}' />
 
-                <EditText
+                <include
                     android:id="@+id/endpointInput"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_weight="1"
-                    android:maxLines="1" />
+                    layout="@layout/settings_text_input"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -39,16 +35,12 @@
 
                 <include
                     layout="@layout/settings_label"
-                    app:title="@{@string/json_key}" />
+                    app:title='@{"JSON key"}' />
 
-                <EditText
+                <include
                     android:id="@+id/jsonKeyInput"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_weight="1"
-                    android:maxLines="1" />
+                    layout="@layout/settings_text_input"
+                    />
             </LinearLayout>
 
         </LinearLayout>
