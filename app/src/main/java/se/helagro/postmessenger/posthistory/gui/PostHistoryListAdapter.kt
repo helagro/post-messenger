@@ -1,4 +1,4 @@
-package se.helagro.postmessenger.posthistory
+package se.helagro.postmessenger.posthistory.gui
 
 import android.app.Activity
 import android.graphics.Color
@@ -11,6 +11,8 @@ import com.google.android.material.R.drawable.ic_mtrl_checked_circle
 import se.helagro.postmessenger.R
 import se.helagro.postmessenger.network.NetworkMessenger
 import se.helagro.postmessenger.network.NetworkHandlerListener
+import se.helagro.postmessenger.posthistory.PostHistory
+import se.helagro.postmessenger.posthistory.PostHistoryListener
 import se.helagro.postmessenger.postitem.PostItem
 import se.helagro.postmessenger.postitem.PostItemStatus
 

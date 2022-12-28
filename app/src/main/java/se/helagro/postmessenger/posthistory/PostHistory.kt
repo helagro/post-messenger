@@ -24,6 +24,7 @@ class PostHistory() : ArrayList<PostItem>() {
     }
 
 
+    // ========== OVERRIDES ==========
 
     override fun add(element: PostItem): Boolean {
         val result = super.add(element)

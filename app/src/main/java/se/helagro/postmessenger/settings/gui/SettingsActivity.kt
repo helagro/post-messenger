@@ -1,4 +1,4 @@
-package se.helagro.postmessenger.settings
+package se.helagro.postmessenger.settings.gui
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -11,6 +11,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import kotlinx.android.synthetic.main.settings.*
 import se.helagro.postmessenger.R
+import se.helagro.postmessenger.settings.InvalidSettingsListener
+import se.helagro.postmessenger.settings.SettingsValues
 
 
 class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
@@ -74,8 +76,6 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
 
         return true
     }
-
-
 
     // ========== HANDLE UNSAVED CHANGES ==========
 

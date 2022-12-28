@@ -1,19 +1,23 @@
 package se.helagro.postmessenger
+
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import se.helagro.postmessenger.network.NetworkHandler
+import se.helagro.postmessenger.network.NetworkHandlerListener
 import se.helagro.postmessenger.posthistory.PostHistory
-import se.helagro.postmessenger.settings.SettingsActivity
+import se.helagro.postmessenger.posthistory.gui.PostHistoryListAdapter
+import se.helagro.postmessenger.settings.gui.SettingsActivity
 import se.helagro.postmessenger.settings.SettingsValues
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NetworkHandlerListener {
     private val postHistory = PostHistory()
 
 
@@ -31,35 +35,34 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    private fun attemptSetup(){
-        if(SettingsValues.getInstance().areSettingsValid()){
+    private fun attemptSetup() {
+        if (SettingsValues.getInstance().areSettingsValid()) {
             setupViews()
         } else {
             goToSettings()
         }
     }
 
-    private fun goToSettings(){
+    private fun goToSettings() {
         settingsLauncher.launch(Intent(this, SettingsActivity::class.java))
     }
 
 
     //========== VIEW SETUP ==========
 
-    private fun setupViews(){
+    private fun setupViews() {
         //INPUT_FIELD
         focusOnInputField()
-        val inputFieldListener = InputFieldListener(postHistory)
+        val inputFieldListener = InputFieldListener(postHistory, this)
         inputField.setOnEditorActionListener(inputFieldListener)
 
         //POST_LIST
-        val postListAdapter = PostHistoryListAdapter(this, postHistory)
+        val postListAdapter = PostHistoryListAdapter(this, postHistory, this)
         postLogList.adapter = postListAdapter
         postHistory.addListener(postListAdapter)
     }
 
-    private fun focusOnInputField(){
+    private fun focusOnInputField() {
         val imm: InputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(inputField, InputMethodManager.SHOW_IMPLICIT)
@@ -79,9 +82,27 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
-        (postLogList.adapter as PostHistoryListAdapter?)?.let { postHistory.removeListener(it) }
+
+        val listAdapter = postLogList.adapter as PostHistoryListAdapter?
+        if(listAdapter != null){
+            postHistory.removeListener(listAdapter)
+        }
+    }
+
+    override fun onPostItemUpdate(code: Int?, message: String?) {
+        postHistory.alertListeners()
+
+        if (message != null) {
+            AlertDialog.Builder(this)
+                .setTitle(message)
+                .setNeutralButton(
+                    "Ok",
+                    DialogInterface.OnClickListener { dialog: DialogInterface, _: Int ->
+                        dialog.cancel()
+                    })
+                .show()
+        }
     }
 }

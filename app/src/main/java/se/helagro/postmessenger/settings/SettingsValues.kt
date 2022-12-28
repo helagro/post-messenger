@@ -1,6 +1,8 @@
 package se.helagro.postmessenger.settings
 
-import android.webkit.URLUtil
+import android.util.Log
+import android.util.Patterns
+import java.net.URLEncoder
 
 class SettingsValues private constructor() {
     companion object {
@@ -14,16 +16,19 @@ class SettingsValues private constructor() {
 
     private val storageHandler = StorageHandler.getInstance()
 
-    var endPoint = storageHandler.getString(PreferenceInfo.ENDPOINT)
+    var endpointRaw = storageHandler.getString(PreferenceInfo.ENDPOINT)
     var jsonKey = storageHandler.getString(PreferenceInfo.JSON_KEY)
 
+    fun getUrlEncodedEndpoint(): String{
+        return URLEncoder.encode(endpointRaw, Charsets.UTF_8.name())
+    }
 
     fun areSettingsValid(): Boolean{
         return isEndpointValid()
     }
 
-    fun isEndpointValid(): Boolean{
-        return URLUtil.isValidUrl(endPoint)
+    fun isEndpointValid(): Boolean{ //TODO
+        return endpointRaw != ""
     }
 
     fun save(invalidSettingsListener: InvalidSettingsListener): Boolean{
@@ -32,7 +37,7 @@ class SettingsValues private constructor() {
             return false
         }
 
-        storageHandler.setString(PreferenceInfo.ENDPOINT, endPoint)
+        storageHandler.setString(PreferenceInfo.ENDPOINT, endpointRaw)
         storageHandler.setString(PreferenceInfo.JSON_KEY, jsonKey)
         return true
     }

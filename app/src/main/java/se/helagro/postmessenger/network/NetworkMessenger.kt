@@ -15,9 +15,9 @@ import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 
-object NetworkHandler {
+object NetworkMessenger {
     private const val REQUEST_METHOD = "POST"
-    private const val CONNECT_TIMEOUT = 700000 // in milliseconds
+    private const val CONNECT_TIMEOUT = 700000 // in milliseconds TODO debug
     private val ERROR_MESSAGES = hashMapOf<Int, String>(
         404 to "404: The resource at ${SettingsValues.getInstance().endpointRaw} does not exist"
     )
@@ -27,14 +27,9 @@ object NetworkHandler {
         thread {
             val responseCode = makeRequest(postItem.msg)
 
-            when (responseCode){
-                200 ->
-                    postItem.status = PostItemStatus.SUCCESS
-                else ->
-                    postItem.status = PostItemStatus.FAILURE
-            }
-
-            listener.onPostItemUpdate(responseCode, ERROR_MESSAGES.get(responseCode))
+            setPostItemStatus(responseCode, postItem)
+            val errorMessage = ERROR_MESSAGES.get(responseCode)
+            listener.onPostItemUpdate(responseCode, errorMessage)
         }
     }
 
@@ -78,5 +73,14 @@ object NetworkHandler {
         val reader =
             BufferedReader(InputStreamReader(stream))
         reader.close()
+    }
+
+    private fun setPostItemStatus(responseCode: Int?, postItem: PostItem){
+        when (responseCode){
+            200 ->
+                postItem.status = PostItemStatus.SUCCESS
+            else ->
+                postItem.status = PostItemStatus.FAILURE
+        }
     }
 }
