@@ -1,4 +1,4 @@
-package se.helagro.postmessenger
+package se.helagro.postmessenger.posthistory
 
 import android.widget.ImageButton
 import android.widget.TextView

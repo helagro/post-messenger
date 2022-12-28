@@ -1,4 +1,4 @@
-package se.helagro.postmessenger
+package se.helagro.postmessenger.posthistory
 
 import android.app.Activity
 import android.graphics.Color
@@ -8,16 +8,19 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
 import com.google.android.material.R.drawable.ic_mtrl_checked_circle
-import se.helagro.postmessenger.network.NetworkHandler
+import se.helagro.postmessenger.R
+import se.helagro.postmessenger.network.NetworkMessenger
 import se.helagro.postmessenger.network.NetworkHandlerListener
-import se.helagro.postmessenger.posthistory.PostHistory
-import se.helagro.postmessenger.posthistory.PostHistoryListener
 import se.helagro.postmessenger.postitem.PostItem
 import se.helagro.postmessenger.postitem.PostItemStatus
 
 
-class PostHistoryListAdapter(private val activity: Activity, private val postHistory: PostHistory) :
-    ArrayAdapter<PostItem>(activity, -1, postHistory), PostHistoryListener, NetworkHandlerListener {
+class PostHistoryListAdapter(
+    private val activity: Activity,
+    private val postHistory: PostHistory,
+    private val networkHandlerListener: NetworkHandlerListener
+) :
+    ArrayAdapter<PostItem>(activity, -1, postHistory), PostHistoryListener {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -34,7 +37,7 @@ class PostHistoryListAdapter(private val activity: Activity, private val postHis
             viewHolder.statusBtn = listItem.findViewById(R.id.postLogListImgBtn)
 
             viewHolder.statusBtn.setOnClickListener {
-                NetworkHandler.sendMessage(postItem, this)
+                NetworkMessenger.sendMessage(postItem, networkHandlerListener)
                 setStatusBtnStatus(postItem, viewHolder.statusBtn)
             }
 
@@ -73,9 +76,5 @@ class PostHistoryListAdapter(private val activity: Activity, private val postHis
         activity.runOnUiThread {
             notifyDataSetChanged()
         }
-    }
-
-    override fun onPostItemUpdate(code: Int) {
-        postHistory.alertListeners()
     }
 }

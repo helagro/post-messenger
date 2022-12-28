@@ -42,7 +42,7 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
         jsonKeyEditText = jsonKeyInput as EditText
         endpointEditText = endpointInput as EditText
 
-        endpointEditText.setText(settingsValues.endPoint)
+        endpointEditText.setText(settingsValues.endpointRaw)
         jsonKeyEditText.setText(settingsValues.jsonKey)
     }
 
@@ -80,7 +80,7 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     // ========== HANDLE UNSAVED CHANGES ==========
 
     private fun hasUnsavedChanges(): Boolean {
-        return settingsValues.endPoint != endpointEditText.text.toString()
+        return settingsValues.endpointRaw != endpointEditText.text.toString()
                 || settingsValues.jsonKey != jsonKeyEditText.text.toString()
     }
 
@@ -103,7 +103,7 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     // ========== SAVING ==========
 
     private fun saveSettings(): Boolean{
-        settingsValues.endPoint = endpointEditText.text.toString()
+        settingsValues.endpointRaw = endpointEditText.text.toString()
         settingsValues.jsonKey = jsonKeyEditText.text.toString()
 
         return settingsValues.save(this)

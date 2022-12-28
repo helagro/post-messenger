@@ -1,9 +1,9 @@
 package se.helagro.postmessenger.network
 
+import android.util.Log
 import se.helagro.postmessenger.postitem.PostItem
 import se.helagro.postmessenger.postitem.PostItemStatus
 import se.helagro.postmessenger.settings.SettingsValues
-import se.helagro.postmessenger.settings.StorageHandler
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -17,42 +17,45 @@ import kotlin.concurrent.thread
 
 object NetworkHandler {
     private const val REQUEST_METHOD = "POST"
-    private const val CONNECT_TIMEOUT = 7000 // in milliseconds
-    private const val ERROR_CODE = -1
+    private const val CONNECT_TIMEOUT = 700000 // in milliseconds
+    private val ERROR_MESSAGES = hashMapOf<Int, String>(
+        404 to "404: The resource at ${SettingsValues.getInstance().endpointRaw} does not exist"
+    )
 
     fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
         postItem.status = PostItemStatus.LOADING //to display right in views
         thread {
             val responseCode = makeRequest(postItem.msg)
 
-            if (responseCode == 200) {
-                postItem.status = PostItemStatus.SUCCESS
-            }
-            else {
-                postItem.status = PostItemStatus.FAILURE
+            when (responseCode){
+                200 ->
+                    postItem.status = PostItemStatus.SUCCESS
+                else ->
+                    postItem.status = PostItemStatus.FAILURE
             }
 
-            listener.onPostItemUpdate(responseCode)
+            listener.onPostItemUpdate(responseCode, ERROR_MESSAGES.get(responseCode))
         }
     }
 
-    private fun makeRequest(msg: String): Int {
-        return try {
-            val connection = setupConnection()
+    private fun makeRequest(msg: String): Int? {
+        var connection: HttpURLConnection? = null
+        try {
+            connection = setupConnection()
 
             writeData(connection.outputStream, msg)
             readData(connection.inputStream)
 
             connection.disconnect()
-
-            connection.responseCode //could be problematic - is closed
-        } catch (_: Exception) {
-            ERROR_CODE
+        } catch (e: Exception) {
+            Log.e("NetworkHandler", e.stackTraceToString())
         }
+
+        return connection?.responseCode
     }
 
     private fun setupConnection(): HttpURLConnection {
-        val endpoint = SettingsValues.getInstance().endPoint
+        val endpoint = SettingsValues.getInstance().endpointRaw
         val connection = URL(endpoint).openConnection() as HttpURLConnection
         connection.connectTimeout = CONNECT_TIMEOUT
         connection.requestMethod = REQUEST_METHOD
