@@ -19,7 +19,6 @@
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="stateVisible"
-            android:screenOrientation="portrait"
             android:launchMode= "singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -18,7 +18,7 @@ import se.helagro.postmessenger.settings.gui.SettingsActivity
 import se.helagro.postmessenger.settings.SettingsValues
 
 class MainActivity : AppCompatActivity(), NetworkHandlerListener {
-    private val postHistory = PostHistory()
+    private val postHistory = PostHistory.getInstance()
 
 
     //=========== ENTRY POINTS ===========
@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), NetworkHandlerListener {
 
         attemptSetup()
     }
+
 
 
     private fun attemptSetup() {
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity(), NetworkHandlerListener {
     private fun setupViews() {
         //INPUT_FIELD
         focusOnInputField()
-        val inputFieldListener = InputFieldListener(postHistory, this)
+        val inputFieldListener = InputFieldListener(this)
         inputField.setOnEditorActionListener(inputFieldListener)
 
         //POST_LIST
@@ -82,27 +83,39 @@ class MainActivity : AppCompatActivity(), NetworkHandlerListener {
     }
 
 
+    // ========== POST ITEM UPDATE ==========
+
+    override fun onPostItemUpdate(code: Int?, message: String?) {
+        this.runOnUiThread{
+            postHistory.alertListeners()
+
+            if (code != null && message != null) {
+                showErrorDialog(code, message)
+            }
+        }
+    }
+
+    fun showErrorDialog(code: Int, message: String){
+        AlertDialog.Builder(this)
+            .setTitle(code.toString())
+            .setMessage(message)
+            .setNeutralButton(
+                "Ok",
+                DialogInterface.OnClickListener { dialog: DialogInterface, _: Int ->
+                    dialog.cancel()
+                })
+            .show()
+    }
+
+
+    // ========== ENDING LIFECYCLE ==========
+
     override fun onDestroy() {
         super.onDestroy()
 
         val listAdapter = postLogList.adapter as PostHistoryListAdapter?
         if(listAdapter != null){
             postHistory.removeListener(listAdapter)
-        }
-    }
-
-    override fun onPostItemUpdate(code: Int?, message: String?) {
-        postHistory.alertListeners()
-
-        if (message != null) {
-            AlertDialog.Builder(this)
-                .setTitle(message)
-                .setNeutralButton(
-                    "Ok",
-                    DialogInterface.OnClickListener { dialog: DialogInterface, _: Int ->
-                        dialog.cancel()
-                    })
-                .show()
         }
     }
 }

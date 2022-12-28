@@ -9,10 +9,11 @@ import se.helagro.postmessenger.posthistory.PostHistory
 import se.helagro.postmessenger.postitem.PostItem
 
 class InputFieldListener(
-    private val postHistory: PostHistory,
     private val networkHandlerListener: NetworkHandlerListener
 ) :
     TextView.OnEditorActionListener {
+
+    val postHistory = PostHistory.getInstance()
 
     override fun onEditorAction(textView: TextView?, actionId: Int, p2: KeyEvent?): Boolean {
         if (!isUserDone(actionId) || textView == null) return false

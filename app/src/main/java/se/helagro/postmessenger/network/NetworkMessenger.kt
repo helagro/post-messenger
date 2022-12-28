@@ -19,7 +19,7 @@ object NetworkMessenger {
     private const val REQUEST_METHOD = "POST"
     private const val CONNECT_TIMEOUT = 700000 // in milliseconds TODO debug
     private val ERROR_MESSAGES = hashMapOf<Int, String>(
-        404 to "404: The resource at ${SettingsValues.getInstance().endpointRaw} does not exist"
+        404 to "The resource at the specified URL does not exist"
     )
 
     fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {

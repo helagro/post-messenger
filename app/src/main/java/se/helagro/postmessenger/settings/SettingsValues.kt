@@ -6,11 +6,15 @@ import java.net.URLEncoder
 
 class SettingsValues private constructor() {
     companion object {
+        private val SYNC_LOCK = Any()
         private var instance: SettingsValues? = null
 
+        @Synchronized
         fun getInstance(): SettingsValues{
-            if(instance == null) instance = SettingsValues()
-            return instance!!
+            synchronized(SYNC_LOCK){
+                if(instance == null) instance = SettingsValues()
+                return instance!!
+            }
         }
     }
 
