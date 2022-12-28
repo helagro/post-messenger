@@ -24,9 +24,7 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //setContentView(R.layout.settings)
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        DataBindingUtil.inflate<ViewDataBinding>(inflater, R.layout.settings, null, false)
+        DataBindingUtil.setContentView<ViewDataBinding>(this, R.layout.settings)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         fillInputFields()
@@ -86,8 +84,7 @@ class SettingsActivity : AppCompatActivity(), InvalidSettingsListener {
         AlertDialog.Builder(this)
             .setTitle("Do you want to save the changes?")
             .setPositiveButton("Yes") { _: DialogInterface, _: Int ->
-                saveSettings()
-                finish()
+                handleLeaving()
             }
             .setNegativeButton("No") { _: DialogInterface, _: Int ->
                 finish()
