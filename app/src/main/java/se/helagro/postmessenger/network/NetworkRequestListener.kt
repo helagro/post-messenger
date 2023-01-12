@@ -1,5 +1,5 @@
 package se.helagro.postmessenger.network
 
 interface NetworkRequestListener {
-    fun onNetworkPostUpdate(resCode: Int?, message: String?)
+    fun onNetworkRequestUpdate(resCode: Int?, message: String?)
 }

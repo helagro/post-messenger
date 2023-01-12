@@ -56,11 +56,11 @@ class MainActivity : AppCompatActivity(), NetworkRequestListener {
     private fun setupViews() {
         //INPUT_FIELD
         focusOnInputField()
-        val inputFieldListener = InputFieldListener(this)
+        val inputFieldListener = InputFieldListener(this as NetworkRequestListener)
         inputField.setOnEditorActionListener(inputFieldListener)
 
         //POST_LIST
-        postHistoryListAdapter = PostHistoryListAdapter(this, this)
+        postHistoryListAdapter = PostHistoryListAdapter(this, this as NetworkRequestListener)
         postHistoryListAdapter.subscribeToPostHistory()
         postLogList.adapter = postHistoryListAdapter
     }
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity(), NetworkRequestListener {
 
     // ========== POST ITEM UPDATE ==========
 
-    override fun onNetworkPostUpdate(resCode: Int?, message: String?) {
+    override fun onNetworkRequestUpdate(resCode: Int?, message: String?) {
         this.runOnUiThread{
             postHistory.alertListeners()
 

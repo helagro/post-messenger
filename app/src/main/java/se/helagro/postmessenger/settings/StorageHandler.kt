@@ -22,12 +22,12 @@ class StorageHandler {
         }
     }
 
+    private val sharedPreferences: SharedPreferences
+
     private constructor(application: Application) {
         sharedPreferences =
             application.getSharedPreferences(PREFERENCES_NAME, Activity.MODE_PRIVATE)
     }
-
-    private val sharedPreferences: SharedPreferences
 
     fun getString(preferenceInfo: PreferenceInfo): String {
         val defaultVal = preferenceInfo.defaultVal as String

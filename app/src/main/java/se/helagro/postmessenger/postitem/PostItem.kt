@@ -1,7 +1,7 @@
 package se.helagro.postmessenger.postitem
 
 class PostItem(val msg: String) {
-    val INITIAL_STATUS = PostItemStatus.LOADING
+    private val INITIAL_STATUS = PostItemStatus.LOADING
 
     var status = INITIAL_STATUS
 

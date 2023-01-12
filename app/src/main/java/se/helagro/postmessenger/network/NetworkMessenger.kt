@@ -18,7 +18,7 @@ import kotlin.concurrent.thread
 object NetworkMessenger {
     private const val REQUEST_METHOD = "POST"
     private const val CONNECT_TIMEOUT = 15 * 1000
-    private val ERROR_MESSAGES = hashMapOf<Int, String>(
+    private val ERROR_MESSAGES = hashMapOf(
         404 to "The resource at the specified URL does not exist"
     )
 
@@ -30,7 +30,7 @@ object NetworkMessenger {
             setPostItemStatus(responseCode, postItem)
             val errorMessage = ERROR_MESSAGES[responseCode]
 
-            listener.onNetworkPostUpdate(responseCode, errorMessage)
+            listener.onNetworkRequestUpdate(responseCode, errorMessage)
         }
     }
 

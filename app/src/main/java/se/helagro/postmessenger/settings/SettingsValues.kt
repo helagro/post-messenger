@@ -1,9 +1,5 @@
 package se.helagro.postmessenger.settings
 
-import android.util.Log
-import android.util.Patterns
-import java.net.URLEncoder
-
 class SettingsValues private constructor() {
     companion object {
         private val SYNC_LOCK = Any()
@@ -27,7 +23,7 @@ class SettingsValues private constructor() {
         return isEndpointValid()
     }
 
-    fun isEndpointValid(): Boolean{ //TODO
+    fun isEndpointValid(): Boolean{
         return endpointRaw != ""
     }
 
