@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageButton
-import com.google.android.material.R.drawable.ic_mtrl_checked_circle
 import se.helagro.postmessenger.R
 import se.helagro.postmessenger.network.NetworkMessenger
-import se.helagro.postmessenger.network.NetworkHandlerListener
+import se.helagro.postmessenger.network.NetworkRequestListener
 import se.helagro.postmessenger.posthistory.PostHistory
 import se.helagro.postmessenger.posthistory.PostHistoryListener
 import se.helagro.postmessenger.postitem.PostItem
@@ -19,46 +18,57 @@ import se.helagro.postmessenger.postitem.PostItemStatus
 
 class PostHistoryListAdapter(
     private val activity: Activity,
-    private val postHistory: PostHistory,
-    private val networkHandlerListener: NetworkHandlerListener
+    private val networkHandlerListener: NetworkRequestListener
 ) :
-    ArrayAdapter<PostItem>(activity, -1, postHistory), PostHistoryListener {
+    ArrayAdapter<PostItem>(activity, -1, PostHistory.getInstance().getList()), PostHistoryListener {
 
+    private val postHistory = PostHistory.getInstance()
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val postItem = postHistory[position]
+    // ========== POST_HISTORY LISTENER ==========
+
+    fun subscribeToPostHistory(){
+        postHistory.addListener(this)
+    }
+
+    fun unsubscribeFromPostHistory(){
+        postHistory.removeListener(this)
+    }
+
+
+    override fun getView(pos: Int, convertView: View?, parent: ViewGroup): View {
+        val postItem = postHistory.get(pos)
         val viewHolder: PostHistoryViewHolder
-        val listItem: View
+        val view: View
 
         if (convertView == null) {
             viewHolder = PostHistoryViewHolder()
-            listItem = inflater.inflate(R.layout.listitem_post, null)
+            view = inflater.inflate(R.layout.post_history_list_item, null)
 
-            viewHolder.textView = listItem.findViewById(R.id.postLogListText)
-            viewHolder.statusBtn = listItem.findViewById(R.id.postLogListImgBtn)
+            viewHolder.textView = view.findViewById(R.id.postLogListText)
+            viewHolder.statusBtn = view.findViewById(R.id.postLogListImgBtn)
 
             viewHolder.statusBtn.setOnClickListener {
                 NetworkMessenger.sendMessage(postItem, networkHandlerListener)
                 setStatusBtnStatus(postItem, viewHolder.statusBtn)
             }
 
-            listItem.tag = viewHolder
+            view.tag = viewHolder
         } else {
             viewHolder = convertView.tag as PostHistoryViewHolder
-            listItem = convertView
+            view = convertView
         }
 
         viewHolder.textView.text = postItem.msg
         setStatusBtnStatus(postItem, viewHolder.statusBtn)
 
-        return listItem
+        return view
     }
 
     private fun setStatusBtnStatus(postItem: PostItem, statusBtn: ImageButton) {
         when (postItem.status) {
             PostItemStatus.SUCCESS -> {
-                statusBtn.setImageResource(ic_mtrl_checked_circle)
+                statusBtn.setImageResource(android.R.drawable.checkbox_on_background)
                 statusBtn.clearColorFilter()
                 statusBtn.isEnabled = false
             }

@@ -1,8 +1,10 @@
 package se.helagro.postmessenger.posthistory
 
+import android.util.Log
 import se.helagro.postmessenger.postitem.PostItem
 
-class PostHistory private constructor() : ArrayList<PostItem>() {
+class PostHistory private constructor() {
+    private val list = ArrayList<PostItem>()
     private val listeners = ArrayList<PostHistoryListener>()
 
     companion object {
@@ -18,11 +20,25 @@ class PostHistory private constructor() : ArrayList<PostItem>() {
         }
     }
 
+    // ========== GETTERS ============
+
+    fun getList(): ArrayList<PostItem>{
+        return list
+    }
+
+    fun get(i: Int): PostItem{
+        return list[i]
+    }
+
 
     // ========== LISTENERS ==========
 
     fun addListener(listener: PostHistoryListener) {
-        listeners.add(listener)
+        if(listeners.contains(listener)){
+            Log.w("PostHistory", "Listener has already been added")
+        } else {
+            listeners.add(listener)
+        }
     }
 
     fun removeListener(listener: PostHistoryListener) {
@@ -36,10 +52,10 @@ class PostHistory private constructor() : ArrayList<PostItem>() {
     }
 
 
-    // ========== OVERRIDES ==========
+    // ========== MODIFY LIST ==========
 
-    override fun add(element: PostItem): Boolean {
-        val result = super.add(element)
+    fun add(element: PostItem): Boolean {
+        val result = list.add(element)
         alertListeners()
 
         return result

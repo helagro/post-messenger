@@ -23,10 +23,6 @@ class SettingsValues private constructor() {
     var endpointRaw = storageHandler.getString(PreferenceInfo.ENDPOINT)
     var jsonKey = storageHandler.getString(PreferenceInfo.JSON_KEY)
 
-    fun getUrlEncodedEndpoint(): String{
-        return URLEncoder.encode(endpointRaw, Charsets.UTF_8.name())
-    }
-
     fun areSettingsValid(): Boolean{
         return isEndpointValid()
     }

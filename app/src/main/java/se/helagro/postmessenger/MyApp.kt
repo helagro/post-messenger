@@ -6,7 +6,7 @@ import se.helagro.postmessenger.settings.StorageHandler
 
 class MyApp : Application() {
     override fun onCreate() {
-        StorageHandler.init(this)
+        StorageHandler.initialize(this)
         super.onCreate()
     }
 }

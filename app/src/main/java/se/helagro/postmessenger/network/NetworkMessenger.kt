@@ -17,19 +17,20 @@ import kotlin.concurrent.thread
 
 object NetworkMessenger {
     private const val REQUEST_METHOD = "POST"
-    private const val CONNECT_TIMEOUT = 700000 // in milliseconds TODO debug
+    private const val CONNECT_TIMEOUT = 15 * 1000
     private val ERROR_MESSAGES = hashMapOf<Int, String>(
         404 to "The resource at the specified URL does not exist"
     )
 
-    fun sendMessage(postItem: PostItem, listener: NetworkHandlerListener) {
+    fun sendMessage(postItem: PostItem, listener: NetworkRequestListener) {
         postItem.status = PostItemStatus.LOADING //to display right in views
         thread {
             val responseCode = makeRequest(postItem.msg)
 
             setPostItemStatus(responseCode, postItem)
-            val errorMessage = ERROR_MESSAGES.get(responseCode)
-            listener.onPostItemUpdate(responseCode, errorMessage)
+            val errorMessage = ERROR_MESSAGES[responseCode]
+
+            listener.onNetworkPostUpdate(responseCode, errorMessage)
         }
     }
 

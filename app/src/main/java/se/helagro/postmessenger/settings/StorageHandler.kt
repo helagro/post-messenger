@@ -6,11 +6,13 @@ import android.content.SharedPreferences
 
 
 class StorageHandler {
+
     companion object {
         private const val PREFERENCES_NAME = "main_preferences"
+
         private var instance: StorageHandler? = null
 
-        fun init(application: Application) {
+        fun initialize(application: Application) {
             instance = StorageHandler(application)
         }
 

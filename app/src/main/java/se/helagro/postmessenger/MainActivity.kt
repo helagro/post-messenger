@@ -11,14 +11,15 @@ import androidx.activity.result.contract.ActivityResultContracts.StartActivityFo
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import se.helagro.postmessenger.network.NetworkHandlerListener
+import se.helagro.postmessenger.network.NetworkRequestListener
 import se.helagro.postmessenger.posthistory.PostHistory
 import se.helagro.postmessenger.posthistory.gui.PostHistoryListAdapter
 import se.helagro.postmessenger.settings.gui.SettingsActivity
 import se.helagro.postmessenger.settings.SettingsValues
 
-class MainActivity : AppCompatActivity(), NetworkHandlerListener {
+class MainActivity : AppCompatActivity(), NetworkRequestListener {
     private val postHistory = PostHistory.getInstance()
+    private lateinit var postHistoryListAdapter: PostHistoryListAdapter
 
 
     //=========== ENTRY POINTS ===========
@@ -35,9 +36,10 @@ class MainActivity : AppCompatActivity(), NetworkHandlerListener {
     }
 
 
-
     private fun attemptSetup() {
-        if (SettingsValues.getInstance().areSettingsValid()) {
+        val settingsAreValid = SettingsValues.getInstance().areSettingsValid()
+
+        if (settingsAreValid) {
             setupViews()
         } else {
             goToSettings()
@@ -58,9 +60,9 @@ class MainActivity : AppCompatActivity(), NetworkHandlerListener {
         inputField.setOnEditorActionListener(inputFieldListener)
 
         //POST_LIST
-        val postListAdapter = PostHistoryListAdapter(this, postHistory, this)
-        postLogList.adapter = postListAdapter
-        postHistory.addListener(postListAdapter)
+        postHistoryListAdapter = PostHistoryListAdapter(this, this)
+        postHistoryListAdapter.subscribeToPostHistory()
+        postLogList.adapter = postHistoryListAdapter
     }
 
     private fun focusOnInputField() {
@@ -85,25 +87,25 @@ class MainActivity : AppCompatActivity(), NetworkHandlerListener {
 
     // ========== POST ITEM UPDATE ==========
 
-    override fun onPostItemUpdate(code: Int?, message: String?) {
+    override fun onNetworkPostUpdate(resCode: Int?, message: String?) {
         this.runOnUiThread{
             postHistory.alertListeners()
 
-            if (code != null && message != null) {
-                showErrorDialog(code, message)
+            if (resCode != null && message != null) {
+                showErrorDialog(resCode, message)
             }
         }
     }
 
-    fun showErrorDialog(code: Int, message: String){
+    private fun showErrorDialog(code: Int, message: String){
         AlertDialog.Builder(this)
             .setTitle(code.toString())
             .setMessage(message)
             .setNeutralButton(
-                "Ok",
-                DialogInterface.OnClickListener { dialog: DialogInterface, _: Int ->
-                    dialog.cancel()
-                })
+                "Ok"
+            ) { dialog: DialogInterface, _: Int ->
+                dialog.cancel()
+            }
             .show()
     }
 
@@ -113,9 +115,6 @@ class MainActivity : AppCompatActivity(), NetworkHandlerListener {
     override fun onDestroy() {
         super.onDestroy()
 
-        val listAdapter = postLogList.adapter as PostHistoryListAdapter?
-        if(listAdapter != null){
-            postHistory.removeListener(listAdapter)
-        }
+        postHistoryListAdapter.unsubscribeFromPostHistory()
     }
 }
