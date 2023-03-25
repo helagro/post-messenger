@@ -51,12 +51,13 @@ class NetworkHandler(private val endpoint: String) {
     private fun makeRequest(msg: String): Int {
         var connection: HttpURLConnection? = null
         var reader: BufferedReader? = null
-        val data = "&" + jsonKey + "=" + URLEncoder.encode(msg, "UTF-8")
+        val data = getRequestData(msg)
 
         try {
             connection = URL(this.endpoint).openConnection() as HttpURLConnection
             connection.connectTimeout = CONNECT_TIMEOUT
             connection.requestMethod = REQUEST_METHOD
+            connection.setRequestProperty("Content-Type", "text/plain")
             connection.doOutput = true
 
             val writer = OutputStreamWriter(connection.outputStream)
@@ -75,6 +76,11 @@ class NetworkHandler(private val endpoint: String) {
                 return -1
             }
         }
+    }
+
+    private fun getRequestData(msg: String): String{
+        if(jsonKey.isEmpty()) return msg
+        return "&$jsonKey=${URLEncoder.encode(msg, "UTF-8")}"
     }
 
 }
